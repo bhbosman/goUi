@@ -41,12 +41,14 @@ func (self *Service) OnStop(_ context.Context) error {
 }
 
 func (self *Service) Build() OnApplication {
-	return func(app *tview.Application, registeredSlides []ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
-		return self.BuildApp(app, registeredSlides)
+	return func(app *tview.Application, registeredSlides ...ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
+		return self.BuildApp(app, registeredSlides...)
 	}
 }
 
-func (self *Service) BuildApp(app *tview.Application, slideFactories []ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
+func (self *Service) BuildApp(
+	app *tview.Application,
+	slideFactories ...ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
 	m := make(map[string]bool)
 	for _, slide := range slideFactories {
 		if _, ok := m[slide.Title()]; ok {
