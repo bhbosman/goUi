@@ -18,11 +18,10 @@ func ProvideTerminalApplication() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						ApplicationContext context.Context `name:"Application"`
-						PubSub             *pubsub.PubSub  `name:"Application"`
+						PubSub *pubsub.PubSub `name:"Application"`
 					},
 				) IUiService {
-					return NewService(params.ApplicationContext, params.PubSub)
+					return NewService(params.PubSub)
 				},
 			}),
 		fx.Provide(

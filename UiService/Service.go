@@ -15,10 +15,8 @@ import (
 )
 
 type Service struct {
-	ctx        context.Context
-	cancelFunc context.CancelFunc
-	pubSub     *pubsub.PubSub
-	state      IFxService.State
+	pubSub *pubsub.PubSub
+	state  IFxService.State
 }
 
 func (self *Service) ServiceName() string {
@@ -35,7 +33,7 @@ func (self *Service) OnStart(_ context.Context) error {
 }
 
 func (self *Service) OnStop(_ context.Context) error {
-	self.cancelFunc()
+	//self.cancelFunc()
 	self.state = IFxService.Stopped
 	return nil
 }
@@ -125,10 +123,9 @@ func (self *Service) BuildApp(
 	return ui.NewPrimitiveWithCloser(layout, closers), nil
 }
 
-func NewService(ctx context.Context, pubSub *pubsub.PubSub) *Service {
+func NewService(pubSub *pubsub.PubSub) *Service {
 	result := &Service{
 		pubSub: pubSub,
 	}
-	result.ctx, result.cancelFunc = context.WithCancel(ctx)
 	return result
 }
