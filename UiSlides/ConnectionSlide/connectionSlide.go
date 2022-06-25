@@ -222,7 +222,11 @@ func (self *ConnectionSlide) init() {
 
 }
 
-func NewConnectionSlide(applicationContext context.Context, pubSub *pubsub.PubSub, app *tview.Application) *ConnectionSlide {
+func NewConnectionSlide(
+	applicationContext context.Context,
+	pubSub *pubsub.PubSub,
+	app *tview.Application,
+) *ConnectionSlide {
 	ctx, cancelFunc := context.WithCancel(applicationContext)
 	channel := make(chan interface{}, 32)
 
