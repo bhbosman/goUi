@@ -48,7 +48,8 @@ func (self *Service) Build() OnApplication {
 
 func (self *Service) BuildApp(
 	app *tview.Application,
-	slideFactories ...ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
+	slideFactories ...ui.ISlideFactory,
+) (ui.IPrimitiveCloser, error) {
 	m := make(map[string]bool)
 	for _, slide := range slideFactories {
 		if _, ok := m[slide.Title()]; ok {
