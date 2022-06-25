@@ -8,11 +8,8 @@ import (
 	"github.com/rivo/tview"
 )
 
-type OnApplication func(
-	*tview.Application,
-	...ui.ISlideFactory) (ui.IPrimitiveCloser, error)
 type IUi interface {
-	Build() OnApplication
+	Build(*tview.Application, ...ui.ISlideFactory) (ui.IPrimitiveCloser, error)
 }
 
 type IUiService interface {

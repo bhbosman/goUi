@@ -59,7 +59,7 @@ func ProvideTerminalApplication() fx.Option {
 						RegisteredMainWindowSlides []ui.ISlideFactory `group:"RegisteredMainWindowSlides"`
 					},
 				) (ui.IPrimitiveCloser, error) {
-					return params.UiApp.Build()(params.App, params.RegisteredMainWindowSlides...)
+					return params.UiApp.Build(params.App, params.RegisteredMainWindowSlides...)
 
 				},
 			}),

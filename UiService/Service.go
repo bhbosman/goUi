@@ -40,10 +40,8 @@ func (self *Service) OnStop(_ context.Context) error {
 	return nil
 }
 
-func (self *Service) Build() OnApplication {
-	return func(app *tview.Application, registeredSlides ...ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
-		return self.BuildApp(app, registeredSlides...)
-	}
+func (self *Service) Build(app *tview.Application, registeredSlides ...ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
+	return self.BuildApp(app, registeredSlides...)
 }
 
 func (self *Service) BuildApp(
