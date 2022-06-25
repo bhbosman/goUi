@@ -55,12 +55,10 @@ func ProvideTerminalApplication() fx.Option {
 						fx.In
 						UiApp                      IUiService
 						App                        *tview.Application
-						Screen                     tcell.Screen       `optional:"true"`
 						RegisteredMainWindowSlides []ui.ISlideFactory `group:"RegisteredMainWindowSlides"`
 					},
 				) (ui.IPrimitiveCloser, error) {
 					return params.UiApp.Build(params.App, params.RegisteredMainWindowSlides...)
-
 				},
 			}),
 		fx.Provide(
@@ -68,11 +66,16 @@ func ProvideTerminalApplication() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
+						Screen tcell.Screen `optional:"true"`
 					},
 				) (*tview.Application, error) {
 					result := tview.NewApplication()
+					if params.Screen != nil {
+						result = result.SetScreen(params.Screen)
+					}
 					return result, nil
 				},
-			}),
+			},
+		),
 	)
 }
