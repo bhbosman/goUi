@@ -17,7 +17,11 @@ func (self *Factory) OrderNumber() int {
 	return 100
 }
 
-func NewFactory(applicationContext context.Context, pubSub *pubsub.PubSub, app *tview.Application) (*Factory, error) {
+func NewFactory(
+	applicationContext context.Context,
+	pubSub *pubsub.PubSub,
+	app *tview.Application,
+) (*Factory, error) {
 	return &Factory{
 		applicationContext: applicationContext,
 		pubSub:             pubSub,
