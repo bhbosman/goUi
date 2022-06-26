@@ -3,9 +3,11 @@ package ConnectionSlide
 import (
 	"context"
 	"github.com/bhbosman/gocommon/ChannelHandler"
+	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/Services/IDataShutDown"
 	"github.com/bhbosman/gocommon/Services/IFxService"
 	"github.com/bhbosman/gocommon/Services/ISendMessage"
+	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
 )
 
@@ -18,6 +20,8 @@ type Service struct {
 	cancelFunc                 context.CancelFunc
 	cmdChannel                 chan interface{}
 	pubSub                     *pubsub.PubSub
+	ConnectionManagerHelper    IConnectionManager.IHelper
+	UniqueReferenceService     interfaces.IUniqueReferenceService
 }
 
 func (self *Service) SetConnectionInstanceChange(cb func(data *ConnectionInstanceData)) {
@@ -32,16 +36,20 @@ func NewService(
 	parentContext context.Context,
 	pubSub *pubsub.PubSub,
 	onData func() (IConnectionSlideData, error),
+	ConnectionManagerHelper IConnectionManager.IHelper,
+	UniqueReferenceService interfaces.IUniqueReferenceService,
 ) (*Service, error) {
 	ctx, cancelFunc := context.WithCancel(parentContext)
 	channel := make(chan interface{}, 32)
 
 	return &Service{
-		onData:     onData,
-		ctx:        ctx,
-		cancelFunc: cancelFunc,
-		cmdChannel: channel,
-		pubSub:     pubSub,
+		onData:                  onData,
+		ctx:                     ctx,
+		cancelFunc:              cancelFunc,
+		cmdChannel:              channel,
+		pubSub:                  pubSub,
+		ConnectionManagerHelper: ConnectionManagerHelper,
+		UniqueReferenceService:  UniqueReferenceService,
 	}, nil
 }
 
@@ -109,7 +117,7 @@ func (self *Service) goStart(data IConnectionSlideData) {
 		}
 	}(self.cmdChannel)
 
-	pubSubChannel := self.pubSub.Sub("ActiveConnectionStatus")
+	pubSubChannel := self.pubSub.Sub(self.ConnectionManagerHelper.PublishChannelName())
 	defer func(pubSubChannel chan interface{}) {
 		// unsubscribe on different go routine to avoid deadlock
 		go func(pubSubChannel chan interface{}) {
@@ -118,6 +126,15 @@ func (self *Service) goStart(data IConnectionSlideData) {
 			}
 		}(pubSubChannel)
 	}(pubSubChannel)
+
+	ss := self.UniqueReferenceService.Next("ConnectionManagerReceiver")
+	refreshSubChannel := self.pubSub.Sub(ss)
+	go func(refreshSubChannel chan interface{}) {
+		for m := range refreshSubChannel {
+			_ = self.Send(m)
+		}
+	}(refreshSubChannel)
+	self.ConnectionManagerHelper.RefreshData(ss)
 
 	var messageReceived interface{}
 	var ok bool
@@ -132,6 +149,16 @@ func (self *Service) goStart(data IConnectionSlideData) {
 				Cb: func(next interface{}, message interface{}) (bool, error) {
 					rr, e := ISendMessage.ChannelEventsForISendMessage(next.(ISendMessage.ISendMessage), message)
 					return rr, e
+				},
+			},
+			{
+				PubSubHandler:  false,
+				BreakOnSuccess: true,
+				Cb: func(next interface{}, message interface{}) (bool, error) {
+					if unk, ok := next.(IDataShutDown.IDataShutDown); ok {
+						return IDataShutDown.ChannelEventsForIDataShutDown(unk, message)
+					}
+					return false, nil
 				},
 			},
 			{

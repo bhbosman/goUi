@@ -15,6 +15,10 @@ type Data struct {
 	onConnectionInstanceChange func(data *ConnectionInstanceData)
 }
 
+func (self *Data) ShutDown() error {
+	return nil
+}
+
 func NewData() (*Data, error) {
 	result := &Data{
 		ConnectionDataMap: make(map[string]*ConnectionInstanceData),

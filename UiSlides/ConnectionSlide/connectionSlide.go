@@ -3,6 +3,8 @@ package ConnectionSlide
 import (
 	"context"
 	"fmt"
+	"github.com/bhbosman/gocommon/Services/IConnectionManager"
+	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -164,11 +166,17 @@ func NewConnectionSlide(
 	applicationContext context.Context,
 	pubSub *pubsub.PubSub,
 	app *tview.Application,
+	ConnectionManagerHelper IConnectionManager.IHelper,
+	UniqueReferenceService interfaces.IUniqueReferenceService,
 ) (*ConnectionSlide, error) {
-	s, e := NewService(applicationContext, pubSub,
+	s, e := NewService(
+		applicationContext,
+		pubSub,
 		func() (IConnectionSlideData, error) {
 			return NewData()
 		},
+		ConnectionManagerHelper,
+		UniqueReferenceService,
 	)
 	if e != nil {
 		return nil, e

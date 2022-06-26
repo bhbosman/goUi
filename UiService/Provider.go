@@ -5,6 +5,8 @@ import (
 	"github.com/bhbosman/goUi/UiSlides/connectionSlide"
 	"github.com/bhbosman/goUi/UiSlides/intoductionSlide"
 	"github.com/bhbosman/goUi/ui"
+	"github.com/bhbosman/gocommon/Services/IConnectionManager"
+	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -40,12 +42,20 @@ func ProvideTerminalApplication() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						App                *tview.Application
-						ApplicationContext context.Context `name:"Application"`
-						PubSub             *pubsub.PubSub  `name:"Application"`
+						App                     *tview.Application
+						ApplicationContext      context.Context `name:"Application"`
+						PubSub                  *pubsub.PubSub  `name:"Application"`
+						ConnectionManagerHelper IConnectionManager.IHelper
+						UniqueReferenceService  interfaces.IUniqueReferenceService
 					},
 				) (ui.ISlideFactory, error) {
-					return ConnectionSlide.NewFactory(params.ApplicationContext, params.PubSub, params.App)
+					return ConnectionSlide.NewFactory(
+						params.ApplicationContext,
+						params.PubSub,
+						params.App,
+						params.ConnectionManagerHelper,
+						params.UniqueReferenceService,
+					)
 				}}),
 		fx.Provide(
 			fx.Annotated{
