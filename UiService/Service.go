@@ -8,7 +8,6 @@ import (
 	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"io"
 	"sort"
 	"strconv"
 	"strings"
@@ -93,7 +92,7 @@ func (self *Service) BuildApp(
 			ScrollToHighlight()
 	}
 
-	var closers []io.Closer
+	var closers []ui.IPrimitiveCloser
 	for index, slide := range slideFactories {
 		title, primitive := slide.Content()(nextSlide)
 		closers = append(closers, primitive)

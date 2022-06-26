@@ -177,12 +177,17 @@ func (self *ConnectionSlide) SetConnectionInstanceChange(data *ConnectionData) {
 func (self *ConnectionSlide) init() {
 	self.connectionList = tview.NewList().ShowSecondaryText(true)
 	self.connectionList.SetBorder(true).SetTitle("Active Connections")
-	self.connectionList.SetChangedFunc(func(index int, mainText string, secondaryText string, shortcut rune) {
-		_, _ = ISendMessage.CallISendMessageSend(self.ctx, self.channel, false, &PublishInstanceDataFor{
-			Id:   mainText,
-			Name: secondaryText,
+	self.connectionList.SetChangedFunc(
+		func(index int, mainText string, secondaryText string, shortcut rune) {
+			_, _ = ISendMessage.CallISendMessageSend(
+				self.ctx,
+				self.channel,
+				false,
+				&PublishInstanceDataFor{
+					Id:   mainText,
+					Name: secondaryText,
+				})
 		})
-	})
 
 	self.actionList = tview.NewList().ShowSecondaryText(false)
 	self.actionList.SetBorder(true).SetTitle("Actions")

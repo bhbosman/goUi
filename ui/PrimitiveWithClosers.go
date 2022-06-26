@@ -4,15 +4,18 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"go.uber.org/multierr"
-	"io"
 )
 
 type PrimitiveWithCloser struct {
 	primitive tview.Primitive
-	closers   []io.Closer
+	closers   []IPrimitiveCloser
 }
 
 func (self *PrimitiveWithCloser) UpdateContent() error {
+	var err error
+	for _, primitiveCloser := range self.closers {
+		err = multierr.Append(err, primitiveCloser.UpdateContent())
+	}
 	return nil
 }
 
@@ -57,7 +60,7 @@ func (self *PrimitiveWithCloser) Close() error {
 	return err
 }
 
-func NewPrimitiveWithCloser(primitive tview.Primitive, closers []io.Closer) *PrimitiveWithCloser {
+func NewPrimitiveWithCloser(primitive tview.Primitive, closers []IPrimitiveCloser) *PrimitiveWithCloser {
 	return &PrimitiveWithCloser{
 		primitive: primitive,
 		closers:   closers,
