@@ -49,15 +49,21 @@ func (self *Data) handlePublishInstanceDataFor(message *PublishInstanceDataFor) 
 	return nil
 }
 func (self *Data) handleEmptyQueue(_ *messages.EmptyQueue) error {
+	didSomething := self.connectionListIsDirty
 	if self.connectionListIsDirty {
 		self.DoConnectionListChange()
 		self.connectionListIsDirty = false
 	}
 	for _, connectionData := range self.ConnectionDataMap {
+		didSomething = didSomething || connectionData.isDirty
 		if connectionData.isDirty {
 			self.DoConnectionInstanceChange(connectionData)
 			connectionData.isDirty = false
 		}
+	}
+	if !didSomething {
+		d := 233
+		d++
 	}
 	return nil
 }
