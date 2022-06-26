@@ -12,6 +12,10 @@ type PrimitiveWithCloser struct {
 	closers   []io.Closer
 }
 
+func (self *PrimitiveWithCloser) UpdateContent() error {
+	return nil
+}
+
 func (self *PrimitiveWithCloser) Draw(screen tcell.Screen) {
 	self.primitive.Draw(screen)
 }

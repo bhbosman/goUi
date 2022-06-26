@@ -33,7 +33,9 @@ func InvokeTerminalApplication() fx.Option {
 				},
 			) {
 				hook := fx.Hook{
-					OnStart: nil,
+					OnStart: func(ctx context.Context) error {
+						return params.PrimitiveCloser.UpdateContent()
+					},
 					OnStop: func(ctx context.Context) error {
 						return params.PrimitiveCloser.Close()
 					},

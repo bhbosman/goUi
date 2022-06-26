@@ -9,6 +9,10 @@ type PrimitiveNoCloser struct {
 	primitive tview.Primitive
 }
 
+func (self *PrimitiveNoCloser) UpdateContent() error {
+	return nil
+}
+
 func (self *PrimitiveNoCloser) Draw(screen tcell.Screen) {
 	self.primitive.Draw(screen)
 }

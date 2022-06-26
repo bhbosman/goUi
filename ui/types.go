@@ -8,6 +8,7 @@ import (
 type IPrimitiveCloser interface {
 	tview.Primitive
 	io.Closer
+	UpdateContent() error
 }
 
 type SlideCallback func(nextSlide func()) (string, IPrimitiveCloser)

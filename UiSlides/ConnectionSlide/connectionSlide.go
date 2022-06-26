@@ -25,6 +25,10 @@ type ConnectionSlide struct {
 	app            *tview.Application
 }
 
+func (self *ConnectionSlide) UpdateContent() error {
+	return nil
+}
+
 func (self *ConnectionSlide) Close() error {
 	self.cancelFunc()
 	close(self.channel)
