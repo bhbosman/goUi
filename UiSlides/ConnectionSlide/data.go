@@ -9,15 +9,15 @@ import (
 
 type Data struct {
 	connectionListIsDirty      bool
-	ConnectionDataMap          map[string]*ConnectionData
+	ConnectionDataMap          map[string]*ConnectionInstanceData
 	messageRouter              *messageRouter.MessageRouter
 	onConnectionListChange     func(connectionList []IdAndName)
-	onConnectionInstanceChange func(data *ConnectionData)
+	onConnectionInstanceChange func(data *ConnectionInstanceData)
 }
 
 func NewData() *Data {
 	result := &Data{
-		ConnectionDataMap: make(map[string]*ConnectionData),
+		ConnectionDataMap: make(map[string]*ConnectionInstanceData),
 		messageRouter:     messageRouter.NewMessageRouter(),
 	}
 	_ = result.messageRouter.Add(result.handleEmptyQueue)
@@ -82,7 +82,7 @@ func (self *Data) handleConnectionClosed(message *model.ConnectionClosed) error 
 }
 
 func (self *Data) handleConnectionCreated(message *model.ConnectionCreated) error {
-	self.ConnectionDataMap[message.ConnectionId] = &ConnectionData{
+	self.ConnectionDataMap[message.ConnectionId] = &ConnectionInstanceData{
 		isDirty:      true,
 		ConnectionId: message.ConnectionId,
 		Name:         message.ConnectionName,
@@ -113,13 +113,13 @@ func (self *Data) DoConnectionListChange() {
 		self.onConnectionListChange(cbData)
 	}
 }
-func (self *Data) DoConnectionInstanceChange(data *ConnectionData) {
+func (self *Data) DoConnectionInstanceChange(data *ConnectionInstanceData) {
 	if self.onConnectionInstanceChange != nil {
 		self.onConnectionInstanceChange(data)
 	}
 }
 
-func (self *Data) SetConnectionInstanceChange(cb func(data *ConnectionData)) {
+func (self *Data) SetConnectionInstanceChange(cb func(data *ConnectionInstanceData)) {
 	self.onConnectionInstanceChange = cb
 }
 func (self *Data) SetConnectionListChange(cb func(connectionList []IdAndName)) {

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type ConnectionData struct {
+type ConnectionInstanceData struct {
 	ConnectionId   string
 	isDirty        bool
 	CancelContext  context.Context

@@ -155,7 +155,7 @@ func (self *ConnectionSlide) SetConnectionListChange(list []IdAndName) {
 	})
 }
 
-func (self *ConnectionSlide) SetConnectionInstanceChange(data *ConnectionData) {
+func (self *ConnectionSlide) SetConnectionInstanceChange(data *ConnectionInstanceData) {
 	self.app.QueueUpdateDraw(func() {
 		index := self.connectionList.GetCurrentItem()
 		text, _ := self.connectionList.GetItemText(index)
