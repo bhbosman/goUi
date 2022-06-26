@@ -49,7 +49,7 @@ func (self *Service) Send(message interface{}) error {
 	send, err := ISendMessage.CallISendMessageSend(
 		self.ctx,
 		self.cmdChannel,
-		false,
+		false, // Todo: need to figure out why this is false. can not remember why
 		message)
 	if err != nil {
 		return err
