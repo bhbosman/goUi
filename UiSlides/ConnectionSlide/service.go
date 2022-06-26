@@ -149,7 +149,7 @@ func (self *Service) goStart(data IConnectionSlideData) {
 			return len(pubSubChannel) + len(self.cmdChannel)
 		})
 loop:
-	for {
+	for self.ctx.Err() == nil {
 		select {
 		case <-self.ctx.Done():
 			break loop
