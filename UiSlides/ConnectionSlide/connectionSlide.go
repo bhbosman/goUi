@@ -63,21 +63,24 @@ func (self *ConnectionSlide) goRun() {
 }
 
 func (self *ConnectionSlide) SetConnectionListChange(list []IdAndName) {
-	self.app.QueueUpdateDraw(func() {
-		idx := self.connectionList.GetCurrentItem()
-		self.connectionList.Clear()
-		for _, s := range list {
-			self.connectionList.AddItem(s.Id, s.Name, 0, func() {
-				self.actionList.SetCurrentItem(0)
-				self.app.SetFocus(self.actionList)
-			})
-		}
-		self.connectionList.SetCurrentItem(idx)
-		if len(list) == 0 {
-			self.table.SetContent(nil)
-			self.textView.Clear()
-		}
-	})
+	self.app.QueueUpdateDraw(
+		func() {
+			idx := self.connectionList.GetCurrentItem()
+			self.connectionList.Clear()
+			for _, s := range list {
+				self.connectionList.AddItem(s.Id, s.Name, 0,
+					func() {
+						self.actionList.SetCurrentItem(0)
+						self.app.SetFocus(self.actionList)
+					},
+				)
+			}
+			self.connectionList.SetCurrentItem(idx)
+			if len(list) == 0 {
+				self.table.SetContent(nil)
+				self.textView.Clear()
+			}
+		})
 }
 
 func (self *ConnectionSlide) SetConnectionInstanceChange(data *ConnectionInstanceData) {

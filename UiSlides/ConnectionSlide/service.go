@@ -49,7 +49,7 @@ func (self *Service) Send(message interface{}) error {
 	send, err := ISendMessage.CallISendMessageSend(
 		self.ctx,
 		self.cmdChannel,
-		false, // Todo: need to figure out why this is false. can not remember why
+		true, // Todo: need to figure out why this is false. can not remember why
 		message)
 	if err != nil {
 		return err
@@ -130,7 +130,8 @@ func (self *Service) goStart(data IConnectionSlideData) {
 				PubSubHandler:  false,
 				BreakOnSuccess: false,
 				Cb: func(next interface{}, message interface{}) (bool, error) {
-					return ISendMessage.ChannelEventsForISendMessage(next.(ISendMessage.ISendMessage), message)
+					rr, e := ISendMessage.ChannelEventsForISendMessage(next.(ISendMessage.ISendMessage), message)
+					return rr, e
 				},
 			},
 			{
