@@ -46,8 +46,15 @@ func NewService(
 }
 
 func (self *Service) Send(message interface{}) error {
-	//TODO implement me
-	panic("implement me")
+	send, err := ISendMessage.CallISendMessageSend(
+		self.ctx,
+		self.cmdChannel,
+		false,
+		message)
+	if err != nil {
+		return err
+	}
+	return send.Args0
 }
 
 func (self *Service) OnStart(ctx context.Context) error {
