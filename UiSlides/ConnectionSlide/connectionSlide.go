@@ -12,7 +12,7 @@ import (
 )
 
 type ConnectionSlide struct {
-	data           IConnectionData
+	data           IConnectionSlideData
 	connectionList *tview.List
 	table          *tview.Table
 	textView       *tview.TextView

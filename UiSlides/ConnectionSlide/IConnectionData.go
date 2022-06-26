@@ -2,6 +2,10 @@ package ConnectionSlide
 
 import "github.com/bhbosman/gocommon/Services/ISendMessage"
 
-type IConnectionData interface {
+type IConnectionSlide interface {
 	ISendMessage.ISendMessage
+}
+
+type IConnectionSlideData interface {
+	IConnectionSlide
 }
