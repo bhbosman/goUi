@@ -19,7 +19,7 @@ type ConnectionData struct {
 	Grid           []model.LineData
 }
 
-type collectionSlideData struct {
+type ConnectionSlideData struct {
 	connectionListIsDirty      bool
 	ConnectionDataMap          map[string]*ConnectionData
 	messageRouter              *messageRouter.MessageRouter
@@ -27,8 +27,8 @@ type collectionSlideData struct {
 	onConnectionInstanceChange func(data *ConnectionData)
 }
 
-func NewData() *collectionSlideData {
-	result := &collectionSlideData{
+func NewData() *ConnectionSlideData {
+	result := &ConnectionSlideData{
 		ConnectionDataMap: make(map[string]*ConnectionData),
 		messageRouter:     messageRouter.NewMessageRouter(),
 	}
@@ -41,12 +41,12 @@ func NewData() *collectionSlideData {
 	return result
 }
 
-func (self *collectionSlideData) Send(data interface{}) error {
+func (self *ConnectionSlideData) Send(data interface{}) error {
 	_, err := self.messageRouter.Route(data)
 	return err
 }
 
-func (self *collectionSlideData) handleDisconnectConnection(message *DisconnectConnection) error {
+func (self *ConnectionSlideData) handleDisconnectConnection(message *DisconnectConnection) error {
 	if info, ok := self.ConnectionDataMap[message.ConnectionId]; ok {
 		if info.CancelFunc != nil {
 			info.CancelFunc()
@@ -54,13 +54,13 @@ func (self *collectionSlideData) handleDisconnectConnection(message *DisconnectC
 	}
 	return nil
 }
-func (self *collectionSlideData) handlePublishInstanceDataFor(message *PublishInstanceDataFor) error {
+func (self *ConnectionSlideData) handlePublishInstanceDataFor(message *PublishInstanceDataFor) error {
 	if info, ok := self.ConnectionDataMap[message.Id]; ok {
 		self.DoConnectionInstanceChange(info)
 	}
 	return nil
 }
-func (self *collectionSlideData) handleEmptyQueue(_ *messages.EmptyQueue) error {
+func (self *ConnectionSlideData) handleEmptyQueue(_ *messages.EmptyQueue) error {
 	if self.connectionListIsDirty {
 		self.DoConnectionListChange()
 		self.connectionListIsDirty = false
@@ -74,7 +74,7 @@ func (self *collectionSlideData) handleEmptyQueue(_ *messages.EmptyQueue) error 
 	return nil
 }
 
-func (self *collectionSlideData) handleConnectionState(message *model.ConnectionState) error {
+func (self *ConnectionSlideData) handleConnectionState(message *model.ConnectionState) error {
 	if data, ok := self.ConnectionDataMap[message.ConnectionId]; ok {
 		data.isDirty = true
 		data.CancelContext = message.CancelContext
@@ -87,13 +87,13 @@ func (self *collectionSlideData) handleConnectionState(message *model.Connection
 	return nil
 }
 
-func (self *collectionSlideData) handleConnectionClosed(message *model.ConnectionClosed) error {
+func (self *ConnectionSlideData) handleConnectionClosed(message *model.ConnectionClosed) error {
 	delete(self.ConnectionDataMap, message.ConnectionId)
 	self.connectionListIsDirty = true
 	return nil
 }
 
-func (self *collectionSlideData) handleConnectionCreated(message *model.ConnectionCreated) error {
+func (self *ConnectionSlideData) handleConnectionCreated(message *model.ConnectionCreated) error {
 	self.ConnectionDataMap[message.ConnectionId] = &ConnectionData{
 		isDirty:      true,
 		ConnectionId: message.ConnectionId,
@@ -103,7 +103,7 @@ func (self *collectionSlideData) handleConnectionCreated(message *model.Connecti
 	return nil
 }
 
-func (self *collectionSlideData) DoConnectionListChange() {
+func (self *ConnectionSlideData) DoConnectionListChange() {
 	if self.onConnectionListChange != nil {
 		ss := make([]string, 0, len(self.ConnectionDataMap))
 
@@ -125,15 +125,15 @@ func (self *collectionSlideData) DoConnectionListChange() {
 		self.onConnectionListChange(cbData)
 	}
 }
-func (self *collectionSlideData) DoConnectionInstanceChange(data *ConnectionData) {
+func (self *ConnectionSlideData) DoConnectionInstanceChange(data *ConnectionData) {
 	if self.onConnectionInstanceChange != nil {
 		self.onConnectionInstanceChange(data)
 	}
 }
 
-func (self *collectionSlideData) SetConnectionInstanceChange(cb func(data *ConnectionData)) {
+func (self *ConnectionSlideData) SetConnectionInstanceChange(cb func(data *ConnectionData)) {
 	self.onConnectionInstanceChange = cb
 }
-func (self *collectionSlideData) SetConnectionListChange(cb func(connectionList []IdAndName)) {
+func (self *ConnectionSlideData) SetConnectionListChange(cb func(connectionList []IdAndName)) {
 	self.onConnectionListChange = cb
 }
