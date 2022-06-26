@@ -6,6 +6,8 @@ import (
 )
 
 type IConnectionSlide interface {
+	SetConnectionInstanceChange(cb func(data *ConnectionInstanceData))
+	SetConnectionListChange(cb func(connectionList []IdAndName))
 	ISendMessage.ISendMessage
 }
 

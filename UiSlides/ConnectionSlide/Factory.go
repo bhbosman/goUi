@@ -34,8 +34,12 @@ func (self *Factory) Title() string {
 }
 
 func (self *Factory) Content() ui.SlideCallback {
-	return func(nextSlide func()) (string, ui.IPrimitiveCloser) {
-		return self.Title(), NewConnectionSlide(self.applicationContext, self.pubSub, self.app)
+	return func(nextSlide func()) (string, ui.IPrimitiveCloser, error) {
+		slide, err := NewConnectionSlide(self.applicationContext, self.pubSub, self.app)
+		if err != nil {
+			return "", nil, err
+		}
+		return self.Title(), slide, nil
 
 	}
 }

@@ -32,7 +32,7 @@ func (self *CoverSlide) OrderNumber() int {
 }
 
 func (self *CoverSlide) Content() ui2.SlideCallback {
-	return func(nextSlide func()) (string, ui2.IPrimitiveCloser) {
+	return func(nextSlide func()) (string, ui2.IPrimitiveCloser, error) {
 
 		// What's the size of the logo?
 		lines := strings.Split(logo, "\n")
@@ -68,7 +68,7 @@ func (self *CoverSlide) Content() ui2.SlideCallback {
 				AddItem(tview.NewBox(), 0, 1, false), logoHeight, 1, true).
 			AddItem(frame, 0, 10, false)
 
-		return self.Title(), ui2.NewPrimitiveNoCloser(flex)
+		return self.Title(), ui2.NewPrimitiveNoCloser(flex), nil
 	}
 }
 

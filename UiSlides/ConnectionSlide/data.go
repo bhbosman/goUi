@@ -15,7 +15,7 @@ type Data struct {
 	onConnectionInstanceChange func(data *ConnectionInstanceData)
 }
 
-func NewData() *Data {
+func NewData() (*Data, error) {
 	result := &Data{
 		ConnectionDataMap: make(map[string]*ConnectionInstanceData),
 		messageRouter:     messageRouter.NewMessageRouter(),
@@ -26,7 +26,7 @@ func NewData() *Data {
 	_ = result.messageRouter.Add(result.handleConnectionClosed)
 	_ = result.messageRouter.Add(result.handlePublishInstanceDataFor)
 	_ = result.messageRouter.Add(result.handleDisconnectConnection)
-	return result
+	return result, nil
 }
 
 func (self *Data) Send(data interface{}) error {

@@ -11,7 +11,7 @@ type IPrimitiveCloser interface {
 	UpdateContent() error
 }
 
-type SlideCallback func(nextSlide func()) (string, IPrimitiveCloser)
+type SlideCallback func(nextSlide func()) (string, IPrimitiveCloser, error)
 
 type ISlideFactory interface {
 	Title() string

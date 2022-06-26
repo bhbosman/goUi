@@ -94,7 +94,7 @@ func (self *Service) BuildApp(
 
 	var closers []ui.IPrimitiveCloser
 	for index, slide := range slideFactories {
-		title, primitive := slide.Content()(nextSlide)
+		title, primitive, _ := slide.Content()(nextSlide)
 		closers = append(closers, primitive)
 		pages.AddPage(strconv.Itoa(index), primitive, true, index == 0)
 		_, _ = fmt.Fprintf(info, `%d ["%d"][green]%s[white][""]  `, index+1, index, title)

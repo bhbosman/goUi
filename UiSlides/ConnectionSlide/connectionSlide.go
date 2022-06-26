@@ -3,8 +3,6 @@ package ConnectionSlide
 import (
 	"context"
 	"fmt"
-	"github.com/bhbosman/gocommon/ChannelHandler"
-	"github.com/bhbosman/gocommon/Services/ISendMessage"
 	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -12,16 +10,12 @@ import (
 )
 
 type ConnectionSlide struct {
-	data           IConnectionSlideData
+	service        IConnectionSlideService
 	connectionList *tview.List
 	table          *tview.Table
 	textView       *tview.TextView
 	actionList     *tview.List
 	next           tview.Primitive
-	ctx            context.Context
-	cancelFunc     context.CancelFunc
-	channel        chan interface{}
-	pubSub         *pubsub.PubSub
 	app            *tview.Application
 }
 
@@ -30,9 +24,7 @@ func (self *ConnectionSlide) UpdateContent() error {
 }
 
 func (self *ConnectionSlide) Close() error {
-	self.cancelFunc()
-	close(self.channel)
-	return nil
+	return self.service.OnStop(context.Background())
 }
 
 func (self *ConnectionSlide) Draw(screen tcell.Screen) {
@@ -68,73 +60,6 @@ func (self *ConnectionSlide) MouseHandler() func(action tview.MouseAction, event
 }
 
 func (self *ConnectionSlide) goRun() {
-	defer func(cmdChannel <-chan interface{}) {
-		//flush
-		for range cmdChannel {
-		}
-	}(self.channel)
-
-	pubSubChannel := self.pubSub.Sub("ActiveConnectionStatus")
-	defer func(pubSubChannel chan interface{}) {
-		// unsubscribe on different go routine to avoid deadlock
-		go func(pubSubChannel chan interface{}) {
-			self.pubSub.Unsub(pubSubChannel)
-			for range pubSubChannel {
-			}
-		}(pubSubChannel)
-	}(pubSubChannel)
-
-	var messageReceived interface{}
-	var ok bool
-
-	channelHandlerCallback := ChannelHandler.CreateChannelHandlerCallback(
-		self.ctx,
-		self.data,
-		[]ChannelHandler.ChannelHandler{
-			{
-				PubSubHandler:  false,
-				BreakOnSuccess: false,
-				Cb: func(next interface{}, message interface{}) (bool, error) {
-					return ISendMessage.ChannelEventsForISendMessage(next.(ISendMessage.ISendMessage), message)
-				},
-			},
-			{
-				PubSubHandler:  true,
-				BreakOnSuccess: false,
-				Cb: func(next interface{}, message interface{}) (bool, error) {
-					if sm, ok := next.(ISendMessage.ISendMessage); ok {
-						_ = sm.Send(message)
-					}
-					return true, nil
-				},
-			},
-		},
-		func() int {
-			return len(pubSubChannel) + len(self.channel)
-		})
-loop:
-	for {
-		select {
-		case <-self.ctx.Done():
-			break loop
-		case messageReceived, ok = <-self.channel:
-			if !ok {
-				return
-			}
-			b, err := channelHandlerCallback(messageReceived, false)
-			if err != nil || b {
-				return
-			}
-		case messageReceived, ok = <-pubSubChannel:
-			if !ok {
-				return
-			}
-			b, err := channelHandlerCallback(messageReceived, true)
-			if err != nil || b {
-				return
-			}
-		}
-	}
 }
 
 func (self *ConnectionSlide) SetConnectionListChange(list []IdAndName) {
@@ -179,10 +104,7 @@ func (self *ConnectionSlide) init() {
 	self.connectionList.SetBorder(true).SetTitle("Active Connections")
 	self.connectionList.SetChangedFunc(
 		func(index int, mainText string, secondaryText string, shortcut rune) {
-			_, _ = ISendMessage.CallISendMessageSend(
-				self.ctx,
-				self.channel,
-				false,
+			_ = self.service.Send(
 				&PublishInstanceDataFor{
 					Id:   mainText,
 					Name: secondaryText,
@@ -197,8 +119,12 @@ func (self *ConnectionSlide) init() {
 	self.actionList.AddItem("Disconnect", "", 0, func() {
 		index := self.connectionList.GetCurrentItem()
 		text, secondary := self.connectionList.GetItemText(index)
-		_, _ = ISendMessage.CallISendMessageSend(self.ctx, self.channel, false,
-			NewDisconnectConnection(text, secondary))
+		_ = self.service.Send(
+			NewDisconnectConnection(
+				text,
+				secondary,
+			),
+		)
 
 		// Todo: this throws a panic on the first line. need to fix tview
 		//self.connectionList.RemoveItem(index)
@@ -235,22 +161,23 @@ func NewConnectionSlide(
 	applicationContext context.Context,
 	pubSub *pubsub.PubSub,
 	app *tview.Application,
-) *ConnectionSlide {
-	ctx, cancelFunc := context.WithCancel(applicationContext)
-	channel := make(chan interface{}, 32)
-
-	data := NewData()
-	result := &ConnectionSlide{
-		data:       data,
-		ctx:        ctx,
-		cancelFunc: cancelFunc,
-		channel:    channel,
-		pubSub:     pubSub,
-		app:        app,
+) (*ConnectionSlide, error) {
+	s, e := NewService(applicationContext, pubSub,
+		func() (IConnectionSlideData, error) {
+			return NewData()
+		},
+	)
+	if e != nil {
+		return nil, e
 	}
+	result := &ConnectionSlide{
+		service: s,
+		app:     app,
+	}
+	result.service.SetConnectionListChange(result.SetConnectionListChange)
+	result.service.SetConnectionInstanceChange(result.SetConnectionInstanceChange)
+	_ = result.service.OnStart(context.Background())
 	result.init()
-	data.SetConnectionListChange(result.SetConnectionListChange)
-	data.SetConnectionInstanceChange(result.SetConnectionInstanceChange)
 	go result.goRun()
-	return result
+	return result, nil
 }
