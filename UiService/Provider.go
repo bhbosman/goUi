@@ -1,12 +1,9 @@
 package UiService
 
 import (
-	"context"
-	"github.com/bhbosman/goUi/UiSlides/connectionSlide"
+	"github.com/bhbosman/goUi/UiSlides/connectionManagerSlide"
 	"github.com/bhbosman/goUi/UiSlides/intoductionSlide"
 	"github.com/bhbosman/goUi/ui"
-	"github.com/bhbosman/gocommon/Services/IConnectionManager"
-	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -25,38 +22,11 @@ func ProvideTerminalApplication() fx.Option {
 				) IUiService {
 					return NewService(params.PubSub)
 				},
-			}),
-		fx.Provide(
-			fx.Annotated{
-				Group: "RegisteredMainWindowSlides",
-				Target: func(
-					params struct {
-						fx.In
-					},
-				) (ui.ISlideFactory, error) {
-					return &intoductionSlide.CoverSlide{}, nil
-				}}),
-		fx.Provide(
-			fx.Annotated{
-				Group: "RegisteredMainWindowSlides",
-				Target: func(
-					params struct {
-						fx.In
-						App                     *tview.Application
-						ApplicationContext      context.Context `name:"Application"`
-						PubSub                  *pubsub.PubSub  `name:"Application"`
-						ConnectionManagerHelper IConnectionManager.IHelper
-						UniqueReferenceService  interfaces.IUniqueReferenceService
-					},
-				) (ui.ISlideFactory, error) {
-					return ConnectionSlide.NewFactory(
-						params.ApplicationContext,
-						params.PubSub,
-						params.App,
-						params.ConnectionManagerHelper,
-						params.UniqueReferenceService,
-					)
-				}}),
+			},
+		),
+
+		intoductionSlide.ProvideCoverSlide(),
+		connectionManagerSlide.ProvideConnectionManagerSlide(),
 		fx.Provide(
 			fx.Annotated{
 				Target: func(
@@ -69,7 +39,8 @@ func ProvideTerminalApplication() fx.Option {
 				) (ui.IPrimitiveCloser, error) {
 					return params.UiApp.Build(params.App, params.RegisteredMainWindowSlides...)
 				},
-			}),
+			},
+		),
 		fx.Provide(
 			fx.Annotated{
 				Target: func(

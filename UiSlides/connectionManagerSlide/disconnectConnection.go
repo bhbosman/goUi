@@ -1,4 +1,4 @@
-package ConnectionSlide
+package connectionManagerSlide
 
 type DisconnectConnection struct {
 	ConnectionId   string

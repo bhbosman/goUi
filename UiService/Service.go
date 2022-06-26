@@ -39,7 +39,8 @@ func (self *Service) OnStop(_ context.Context) error {
 
 func (self *Service) Build(
 	app *tview.Application,
-	registeredSlides ...ui.ISlideFactory) (ui.IPrimitiveCloser, error) {
+	registeredSlides ...ui.ISlideFactory,
+) (ui.IPrimitiveCloser, error) {
 	return self.BuildApp(app, registeredSlides...)
 }
 

@@ -1,4 +1,4 @@
-package ConnectionSlide
+package connectionManagerSlide
 
 import (
 	"github.com/bhbosman/gocommon/messageRouter"

@@ -24,14 +24,14 @@ const (
 	mouse      = `(or use your mouse)`
 )
 
-type CoverSlide struct {
+type CoverSlideFactory struct {
 }
 
-func (self *CoverSlide) OrderNumber() int {
+func (self *CoverSlideFactory) OrderNumber() int {
 	return 1
 }
 
-func (self *CoverSlide) Content() ui2.SlideCallback {
+func (self *CoverSlideFactory) Content() ui2.SlideCallback {
 	return func(nextSlide func()) (string, ui2.IPrimitiveCloser, error) {
 
 		// What's the size of the logo?
@@ -72,6 +72,6 @@ func (self *CoverSlide) Content() ui2.SlideCallback {
 	}
 }
 
-func (self *CoverSlide) Title() string {
+func (self *CoverSlideFactory) Title() string {
 	return "Cover"
 }

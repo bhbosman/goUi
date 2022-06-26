@@ -1,11 +1,7 @@
-package ConnectionSlide
+package connectionManagerSlide
 
 import (
-	"context"
 	"fmt"
-	"github.com/bhbosman/gocommon/Services/IConnectionManager"
-	"github.com/bhbosman/gocommon/Services/interfaces"
-	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"time"
@@ -26,7 +22,8 @@ func (self *ConnectionSlide) UpdateContent() error {
 }
 
 func (self *ConnectionSlide) Close() error {
-	return self.service.OnStop(context.Background())
+	return nil
+	//return self.service.OnStop(context.Background())
 }
 
 func (self *ConnectionSlide) Draw(screen tcell.Screen) {
@@ -163,31 +160,16 @@ func (self *ConnectionSlide) init() {
 }
 
 func NewConnectionSlide(
-	applicationContext context.Context,
-	pubSub *pubsub.PubSub,
 	app *tview.Application,
-	ConnectionManagerHelper IConnectionManager.IHelper,
-	UniqueReferenceService interfaces.IUniqueReferenceService,
+	service *Service,
 ) (*ConnectionSlide, error) {
-	s, e := NewService(
-		applicationContext,
-		pubSub,
-		func() (IConnectionSlideData, error) {
-			return NewData()
-		},
-		ConnectionManagerHelper,
-		UniqueReferenceService,
-	)
-	if e != nil {
-		return nil, e
-	}
 	result := &ConnectionSlide{
-		service: s,
+		service: service,
 		app:     app,
 	}
 	result.service.SetConnectionListChange(result.SetConnectionListChange)
 	result.service.SetConnectionInstanceChange(result.SetConnectionInstanceChange)
-	_ = result.service.OnStart(context.Background())
+	//_ = result.service.OnStart(context.Background())
 	result.init()
 	go result.goRun()
 	return result, nil
