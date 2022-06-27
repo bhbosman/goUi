@@ -1,8 +1,6 @@
 package UiService
 
 import (
-	"github.com/bhbosman/goUi/UiSlides/connectionManagerSlide"
-	"github.com/bhbosman/goUi/UiSlides/intoductionSlide"
 	"github.com/bhbosman/goUi/ui"
 	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
@@ -10,7 +8,7 @@ import (
 	"go.uber.org/fx"
 )
 
-func ProvideTerminalApplication() fx.Option {
+func ProvideTerminalApplication__() fx.Option {
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -25,8 +23,6 @@ func ProvideTerminalApplication() fx.Option {
 			},
 		),
 
-		intoductionSlide.ProvideCoverSlide(),
-		connectionManagerSlide.ProvideConnectionManagerSlide(),
 		fx.Provide(
 			fx.Annotated{
 				Target: func(

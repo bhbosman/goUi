@@ -2,8 +2,8 @@ package connectionManagerSlide
 
 import (
 	"context"
+	"github.com/bhbosman/goConnectionManager/IConnectionManager"
 	"github.com/bhbosman/goUi/ui"
-	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
 	"github.com/rivo/tview"

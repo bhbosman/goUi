@@ -2,8 +2,9 @@ package connectionManagerSlide
 
 import (
 	"context"
+	"fmt"
+	"github.com/bhbosman/goConnectionManager/IConnectionManager"
 	"github.com/bhbosman/gocommon/ChannelHandler"
-	"github.com/bhbosman/gocommon/Services/IConnectionManager"
 	"github.com/bhbosman/gocommon/Services/IDataShutDown"
 	"github.com/bhbosman/gocommon/Services/IFxService"
 	"github.com/bhbosman/gocommon/Services/ISendMessage"
@@ -131,8 +132,20 @@ func (self *Service) goStart(data IConnectionSlideData) {
 	refreshSubChannel := self.pubSub.Sub(ss)
 	go func(refreshSubChannel chan interface{}) {
 		for m := range refreshSubChannel {
-			_ = self.Send(m)
+			switch v := m.(type) {
+			case *IConnectionManager.RefreshDataStart:
+				_ = self.Send(v)
+				break
+			case *IConnectionManager.RefreshDataStop:
+				_ = self.Send(v)
+				self.pubSub.Unsub(refreshSubChannel, ss)
+				break
+			default:
+				_ = self.Send(v)
+				break
+			}
 		}
+		fmt.Println("Ddddd")
 	}(refreshSubChannel)
 	self.ConnectionManagerHelper.RefreshData(ss)
 
