@@ -58,9 +58,6 @@ func (self *ConnectionSlide) MouseHandler() func(action tview.MouseAction, event
 	return self.next.MouseHandler()
 }
 
-func (self *ConnectionSlide) goRun() {
-}
-
 func (self *ConnectionSlide) SetConnectionListChange(list []IdAndName) {
 	self.app.QueueUpdateDraw(
 		func() {
@@ -169,8 +166,6 @@ func NewConnectionSlide(
 	}
 	result.service.SetConnectionListChange(result.SetConnectionListChange)
 	result.service.SetConnectionInstanceChange(result.SetConnectionInstanceChange)
-	//_ = result.service.OnStart(context.Background())
 	result.init()
-	go result.goRun()
 	return result, nil
 }
