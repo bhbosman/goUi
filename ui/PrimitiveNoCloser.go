@@ -5,6 +5,10 @@ import (
 	"github.com/rivo/tview"
 )
 
+type IScreenDrawToggle interface {
+	Toggle(bool)
+}
+
 type PrimitiveNoCloser struct {
 	primitive tview.Primitive
 }

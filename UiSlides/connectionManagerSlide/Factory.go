@@ -28,16 +28,13 @@ func (self *Factory) Title() string {
 	return "Connections"
 }
 
-func (self *Factory) Content() ui.SlideCallback {
-	return func(nextSlide func()) (string, ui.IPrimitiveCloser, error) {
-		slide, err := NewConnectionSlide(
-			self.app,
-			self.service,
-		)
-		if err != nil {
-			return "", nil, err
-		}
-		return self.Title(), slide, nil
-
+func (self *Factory) Content(nextSlide func()) (string, ui.IPrimitiveCloser, error) {
+	slide, err := NewConnectionSlide(
+		self.app,
+		self.service,
+	)
+	if err != nil {
+		return "", nil, err
 	}
+	return self.Title(), slide, nil
 }

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type ConnectionSlide struct {
+type ConnectionManagerSlide struct {
 	service        IConnectionSlideService
 	connectionList *tview.List
 	table          *tview.Table
@@ -15,51 +15,59 @@ type ConnectionSlide struct {
 	actionList     *tview.List
 	next           tview.Primitive
 	app            *tview.Application
+	canDraw        bool
 }
 
-func (self *ConnectionSlide) UpdateContent() error {
+func (self *ConnectionManagerSlide) Toggle(b bool) {
+	self.canDraw = b
+	self.app.ForceDraw()
+}
+
+func (self *ConnectionManagerSlide) UpdateContent() error {
 	return nil
 }
 
-func (self *ConnectionSlide) Close() error {
+func (self *ConnectionManagerSlide) Close() error {
 	return nil
 	//return self.service.OnStop(context.Background())
 }
 
-func (self *ConnectionSlide) Draw(screen tcell.Screen) {
-	self.next.Draw(screen)
+func (self *ConnectionManagerSlide) Draw(screen tcell.Screen) {
+	if self.canDraw {
+		self.next.Draw(screen)
+	}
 }
 
-func (self *ConnectionSlide) GetRect() (int, int, int, int) {
+func (self *ConnectionManagerSlide) GetRect() (int, int, int, int) {
 	return self.next.GetRect()
 }
 
-func (self *ConnectionSlide) SetRect(x, y, width, height int) {
+func (self *ConnectionManagerSlide) SetRect(x, y, width, height int) {
 	self.next.SetRect(x, y, width, height)
 }
 
-func (self *ConnectionSlide) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+func (self *ConnectionManagerSlide) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 	return self.next.InputHandler()
 }
 
-func (self *ConnectionSlide) Focus(delegate func(p tview.Primitive)) {
+func (self *ConnectionManagerSlide) Focus(delegate func(p tview.Primitive)) {
 	self.next.Focus(delegate)
 }
 
-func (self *ConnectionSlide) HasFocus() bool {
+func (self *ConnectionManagerSlide) HasFocus() bool {
 	return self.next.HasFocus()
 }
 
-func (self *ConnectionSlide) Blur() {
+func (self *ConnectionManagerSlide) Blur() {
 	self.next.Blur()
 }
 
-func (self *ConnectionSlide) MouseHandler() func(action tview.MouseAction, event *tcell.EventMouse, setFocus func(p tview.Primitive)) (consumed bool, capture tview.Primitive) {
+func (self *ConnectionManagerSlide) MouseHandler() func(action tview.MouseAction, event *tcell.EventMouse, setFocus func(p tview.Primitive)) (consumed bool, capture tview.Primitive) {
 	return self.next.MouseHandler()
 }
 
-func (self *ConnectionSlide) SetConnectionListChange(list []IdAndName) {
-	self.app.QueueUpdateDraw(
+func (self *ConnectionManagerSlide) SetConnectionListChange(list []IdAndName) {
+	self.app.QueueUpdate(
 		func() {
 			idx := self.connectionList.GetCurrentItem()
 			self.connectionList.Clear()
@@ -76,11 +84,15 @@ func (self *ConnectionSlide) SetConnectionListChange(list []IdAndName) {
 				self.table.SetContent(nil)
 				self.textView.Clear()
 			}
-		})
+			if self.canDraw {
+				self.app.ForceDraw()
+			}
+		},
+	)
 }
 
-func (self *ConnectionSlide) SetConnectionInstanceChange(data *ConnectionInstanceData) {
-	self.app.QueueUpdateDraw(func() {
+func (self *ConnectionManagerSlide) SetConnectionInstanceChange(data *ConnectionInstanceData) {
+	self.app.QueueUpdate(func() {
 		index := self.connectionList.GetCurrentItem()
 		text, _ := self.connectionList.GetItemText(index)
 		if text == data.ConnectionId {
@@ -95,10 +107,13 @@ func (self *ConnectionSlide) SetConnectionInstanceChange(data *ConnectionInstanc
 				_, _ = fmt.Fprintf(self.textView, "Connect Time: %v, (%v)\n", data.ConnectionTime.Format(time.RFC3339), time.Now().Sub(data.ConnectionTime))
 			}
 		}
+		if self.canDraw {
+			self.app.ForceDraw()
+		}
 	})
 }
 
-func (self *ConnectionSlide) init() {
+func (self *ConnectionManagerSlide) init() {
 	self.connectionList = tview.NewList().ShowSecondaryText(true)
 	self.connectionList.SetBorder(true).SetTitle("Active Connections")
 	self.connectionList.SetChangedFunc(
@@ -159,8 +174,8 @@ func (self *ConnectionSlide) init() {
 func NewConnectionSlide(
 	app *tview.Application,
 	service *Service,
-) (*ConnectionSlide, error) {
-	result := &ConnectionSlide{
+) (*ConnectionManagerSlide, error) {
+	result := &ConnectionManagerSlide{
 		service: service,
 		app:     app,
 	}

@@ -8,7 +8,7 @@ import (
 	"go.uber.org/fx"
 )
 
-func ProvideTerminalApplication__() fx.Option {
+func ProvideTerminalApplication() fx.Option {
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
@@ -22,7 +22,6 @@ func ProvideTerminalApplication__() fx.Option {
 				},
 			},
 		),
-
 		fx.Provide(
 			fx.Annotated{
 				Target: func(

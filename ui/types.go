@@ -11,10 +11,10 @@ type IPrimitiveCloser interface {
 	UpdateContent() error
 }
 
-type SlideCallback func(nextSlide func()) (string, IPrimitiveCloser, error)
+//type SlideCallback func(nextSlide func()) (string, IPrimitiveCloser, error)
 
 type ISlideFactory interface {
 	Title() string
-	Content() SlideCallback
+	Content(nextSlide func()) (string, IPrimitiveCloser, error)
 	OrderNumber() int
 }

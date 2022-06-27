@@ -3,7 +3,7 @@ module github.com/bhbosman/goUi
 go 1.18
 
 require (
-	github.com/bhbosman/gocommon v0.0.0-20220621055214-3b04298a9d45
+	github.com/bhbosman/gocommon v0.0.0-20220627073905-4951fb81c325
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf // indirect
 	github.com/cskr/pubsub v1.0.2
 	github.com/gdamore/tcell/v2 v2.5.1

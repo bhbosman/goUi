@@ -2,7 +2,6 @@ package UiService
 
 import (
 	"context"
-	"github.com/bhbosman/goUi/UiSlides/connectionManagerSlide"
 	"github.com/bhbosman/goUi/ui"
 	"github.com/rivo/tview"
 	"go.uber.org/fx"
@@ -10,7 +9,6 @@ import (
 
 func InvokeTerminalApplication() fx.Option {
 	return fx.Options(
-		connectionManagerSlide.InvokeConnectionManagerSlide(),
 		fx.Invoke(
 			func(
 				params struct {

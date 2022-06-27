@@ -2,7 +2,6 @@ package connectionManagerSlide
 
 import (
 	"context"
-	"fmt"
 	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/ChannelHandler"
 	"github.com/bhbosman/gocommon/Services/IDataShutDown"
@@ -145,7 +144,6 @@ func (self *Service) goStart(data IConnectionSlideData) {
 				break
 			}
 		}
-		fmt.Println("Ddddd")
 	}(refreshSubChannel)
 	self.ConnectionManagerHelper.RefreshData(ss)
 

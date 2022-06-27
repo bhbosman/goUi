@@ -1,6 +1,7 @@
 package connectionManagerSlide
 
 import (
+	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -30,12 +31,22 @@ func NewData() (*Data, error) {
 	_ = result.messageRouter.Add(result.handleConnectionClosed)
 	_ = result.messageRouter.Add(result.handlePublishInstanceDataFor)
 	_ = result.messageRouter.Add(result.handleDisconnectConnection)
+	_ = result.messageRouter.Add(result.handleRefreshDataStart)
+	_ = result.messageRouter.Add(result.handleRefreshDataStop)
 	return result, nil
 }
 
 func (self *Data) Send(data interface{}) error {
 	_, err := self.messageRouter.Route(data)
 	return err
+}
+
+func (self *Data) handleRefreshDataStart(message *goConnectionManager.RefreshDataStart) {
+
+}
+
+func (self *Data) handleRefreshDataStop(message *goConnectionManager.RefreshDataStop) {
+
 }
 
 func (self *Data) handleDisconnectConnection(message *DisconnectConnection) error {
