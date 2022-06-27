@@ -3,7 +3,7 @@ package connectionManagerSlide
 import (
 	"context"
 	"fmt"
-	"github.com/bhbosman/goConnectionManager/IConnectionManager"
+	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/ChannelHandler"
 	"github.com/bhbosman/gocommon/Services/IDataShutDown"
 	"github.com/bhbosman/gocommon/Services/IFxService"
@@ -21,7 +21,7 @@ type Service struct {
 	cancelFunc                 context.CancelFunc
 	cmdChannel                 chan interface{}
 	pubSub                     *pubsub.PubSub
-	ConnectionManagerHelper    IConnectionManager.IHelper
+	ConnectionManagerHelper    goConnectionManager.IHelper
 	UniqueReferenceService     interfaces.IUniqueReferenceService
 }
 
@@ -37,7 +37,7 @@ func NewService(
 	parentContext context.Context,
 	pubSub *pubsub.PubSub,
 	onData func() (IConnectionSlideData, error),
-	ConnectionManagerHelper IConnectionManager.IHelper,
+	ConnectionManagerHelper goConnectionManager.IHelper,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
 ) (*Service, error) {
 	ctx, cancelFunc := context.WithCancel(parentContext)
@@ -133,10 +133,10 @@ func (self *Service) goStart(data IConnectionSlideData) {
 	go func(refreshSubChannel chan interface{}) {
 		for m := range refreshSubChannel {
 			switch v := m.(type) {
-			case *IConnectionManager.RefreshDataStart:
+			case *goConnectionManager.RefreshDataStart:
 				_ = self.Send(v)
 				break
-			case *IConnectionManager.RefreshDataStop:
+			case *goConnectionManager.RefreshDataStop:
 				_ = self.Send(v)
 				self.pubSub.Unsub(refreshSubChannel, ss)
 				break

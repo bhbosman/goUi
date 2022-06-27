@@ -2,7 +2,7 @@ package connectionManagerSlide
 
 import (
 	"context"
-	"github.com/bhbosman/goConnectionManager/IConnectionManager"
+	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/goUi/ui"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
@@ -42,7 +42,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 					fx.In
 					PubSub                  *pubsub.PubSub  `name:"Application"`
 					ApplicationContext      context.Context `name:"Application"`
-					ConnectionManagerHelper IConnectionManager.IHelper
+					ConnectionManagerHelper goConnectionManager.IHelper
 					UniqueReferenceService  interfaces.IUniqueReferenceService
 				}) (*Service, error) {
 					s, e := NewService(
