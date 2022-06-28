@@ -1,4 +1,4 @@
-package connectionManagerSlide
+package cmSlide
 
 import (
 	"fmt"
@@ -34,17 +34,17 @@ func ByteCountIEC(b int64) string {
 		float64(b)/float64(div), "KMGTPE"[exp])
 }
 
-type connectionPlateContent struct {
+type connectionDetailPlateContent struct {
 	Grid []model.LineData
 }
 
-func newConnectionPlateContent(Grid []model.LineData) *connectionPlateContent {
-	return &connectionPlateContent{
+func newConnectionPlateContent(Grid []model.LineData) *connectionDetailPlateContent {
+	return &connectionDetailPlateContent{
 		Grid: Grid,
 	}
 }
 
-func (self *connectionPlateContent) GetCell(row, column int) *tview.TableCell {
+func (self *connectionDetailPlateContent) GetCell(row, column int) *tview.TableCell {
 	switch column {
 	case 0:
 		switch row {
@@ -137,28 +137,28 @@ func (self *connectionPlateContent) GetCell(row, column int) *tview.TableCell {
 	return tview.NewTableCell("")
 }
 
-func (self *connectionPlateContent) GetRowCount() int {
+func (self *connectionDetailPlateContent) GetRowCount() int {
 	return len(self.Grid) + 1
 }
 
-func (self *connectionPlateContent) GetColumnCount() int {
+func (self *connectionDetailPlateContent) GetColumnCount() int {
 	return 11
 }
 
-func (self *connectionPlateContent) SetCell(_, _ int, _ *tview.TableCell) {
+func (self *connectionDetailPlateContent) SetCell(_, _ int, _ *tview.TableCell) {
 }
 
-func (self *connectionPlateContent) RemoveRow(_ int) {
+func (self *connectionDetailPlateContent) RemoveRow(_ int) {
 }
 
-func (self *connectionPlateContent) RemoveColumn(_ int) {
+func (self *connectionDetailPlateContent) RemoveColumn(_ int) {
 }
 
-func (self *connectionPlateContent) InsertRow(_ int) {
+func (self *connectionDetailPlateContent) InsertRow(_ int) {
 }
 
-func (self *connectionPlateContent) InsertColumn(_ int) {
+func (self *connectionDetailPlateContent) InsertColumn(_ int) {
 }
 
-func (self *connectionPlateContent) Clear() {
+func (self *connectionDetailPlateContent) Clear() {
 }

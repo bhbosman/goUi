@@ -1,4 +1,4 @@
-package connectionManagerSlide
+package cmSlide
 
 type PublishInstanceDataFor struct {
 	Id   string

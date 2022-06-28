@@ -1,4 +1,4 @@
-package connectionManagerSlide
+package cmSlide
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"github.com/cskr/pubsub"
 	"github.com/rivo/tview"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 func InvokeConnectionManagerSlide() fx.Option {
@@ -44,6 +45,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 					ApplicationContext      context.Context `name:"Application"`
 					ConnectionManagerHelper goConnectionManager.IHelper
 					UniqueReferenceService  interfaces.IUniqueReferenceService
+					Logger                  *zap.Logger
 				}) (*Service, error) {
 					s, e := NewService(
 						params.ApplicationContext,
@@ -53,6 +55,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 						},
 						params.ConnectionManagerHelper,
 						params.UniqueReferenceService,
+						params.Logger,
 					)
 					if e != nil {
 						return nil, e

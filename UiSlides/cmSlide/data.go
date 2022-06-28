@@ -1,4 +1,4 @@
-package connectionManagerSlide
+package cmSlide
 
 import (
 	"github.com/bhbosman/goConnectionManager"
@@ -13,7 +13,7 @@ type Data struct {
 	ConnectionDataMap          map[string]*ConnectionInstanceData
 	messageRouter              *messageRouter.MessageRouter
 	onConnectionListChange     func(connectionList []IdAndName)
-	onConnectionInstanceChange func(data *ConnectionInstanceData)
+	onConnectionInstanceChange func(data ConnectionInstanceData)
 }
 
 func (self *Data) ShutDown() error {
@@ -136,11 +136,11 @@ func (self *Data) DoConnectionListChange() {
 }
 func (self *Data) DoConnectionInstanceChange(data *ConnectionInstanceData) {
 	if self.onConnectionInstanceChange != nil {
-		self.onConnectionInstanceChange(data)
+		self.onConnectionInstanceChange(*data)
 	}
 }
 
-func (self *Data) SetConnectionInstanceChange(cb func(data *ConnectionInstanceData)) {
+func (self *Data) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
 	self.onConnectionInstanceChange = cb
 }
 func (self *Data) SetConnectionListChange(cb func(connectionList []IdAndName)) {

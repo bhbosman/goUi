@@ -1,4 +1,4 @@
-package connectionManagerSlide
+package cmSlide
 
 import (
 	"github.com/bhbosman/gocommon/Services/IFxService"

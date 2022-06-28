@@ -1,19 +1,19 @@
-package connectionManagerSlide
+package cmSlide
 
 import (
 	"context"
 	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/ChannelHandler"
-	"github.com/bhbosman/gocommon/Services/IDataShutDown"
 	"github.com/bhbosman/gocommon/Services/IFxService"
 	"github.com/bhbosman/gocommon/Services/ISendMessage"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
+	"go.uber.org/zap"
 )
 
 type Service struct {
 	onConnectionListChange     func(connectionList []IdAndName)
-	onConnectionInstanceChange func(data *ConnectionInstanceData)
+	onConnectionInstanceChange func(data ConnectionInstanceData)
 	onData                     func() (IConnectionSlideData, error)
 	state                      IFxService.State
 	ctx                        context.Context
@@ -22,9 +22,10 @@ type Service struct {
 	pubSub                     *pubsub.PubSub
 	ConnectionManagerHelper    goConnectionManager.IHelper
 	UniqueReferenceService     interfaces.IUniqueReferenceService
+	logger                     *zap.Logger
 }
 
-func (self *Service) SetConnectionInstanceChange(cb func(data *ConnectionInstanceData)) {
+func (self *Service) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
 	self.onConnectionInstanceChange = cb
 }
 
@@ -38,6 +39,7 @@ func NewService(
 	onData func() (IConnectionSlideData, error),
 	ConnectionManagerHelper goConnectionManager.IHelper,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
+	logger *zap.Logger,
 ) (*Service, error) {
 	ctx, cancelFunc := context.WithCancel(parentContext)
 	channel := make(chan interface{}, 32)
@@ -50,6 +52,7 @@ func NewService(
 		pubSub:                  pubSub,
 		ConnectionManagerHelper: ConnectionManagerHelper,
 		UniqueReferenceService:  UniqueReferenceService,
+		logger:                  logger,
 	}, nil
 }
 
@@ -83,12 +86,8 @@ func (self *Service) OnStop(ctx context.Context) error {
 }
 
 func (self *Service) shutdown(_ context.Context) error {
-	data, err := IDataShutDown.CallIDataShutDownShutDown(self.ctx, self.cmdChannel, true)
-	if err != nil {
-		return err
-	}
 	self.cancelFunc()
-	return data.Args0
+	return nil
 }
 
 func (self *Service) start(_ context.Context) error {
@@ -162,15 +161,6 @@ func (self *Service) goStart(data IConnectionSlideData) {
 				},
 			},
 			{
-				BreakOnSuccess: true,
-				Cb: func(next interface{}, message interface{}) (bool, error) {
-					if unk, ok := next.(IDataShutDown.IDataShutDown); ok {
-						return IDataShutDown.ChannelEventsForIDataShutDown(unk, message)
-					}
-					return false, nil
-				},
-			},
-			{
 				BreakOnSuccess: false,
 				Cb: func(next interface{}, message interface{}) (bool, error) {
 					if sm, ok := next.(ISendMessage.ISendMessage); ok {
@@ -184,9 +174,15 @@ func (self *Service) goStart(data IConnectionSlideData) {
 			return len(pubSubChannel) + len(self.cmdChannel)
 		})
 loop:
-	for self.ctx.Err() == nil {
+	for {
 		select {
 		case <-self.ctx.Done():
+			err := data.ShutDown()
+			if err != nil {
+				self.logger.Error(
+					"error on done",
+					zap.Error(err))
+			}
 			break loop
 		case messageReceived, ok = <-self.cmdChannel:
 			if !ok {
