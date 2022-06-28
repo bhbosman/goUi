@@ -155,7 +155,6 @@ func (self *Service) goStart(data IConnectionSlideData) {
 		data,
 		[]ChannelHandler.ChannelHandler{
 			{
-				PubSubHandler:  false,
 				BreakOnSuccess: false,
 				Cb: func(next interface{}, message interface{}) (bool, error) {
 					rr, e := ISendMessage.ChannelEventsForISendMessage(next.(ISendMessage.ISendMessage), message)
@@ -163,7 +162,6 @@ func (self *Service) goStart(data IConnectionSlideData) {
 				},
 			},
 			{
-				PubSubHandler:  false,
 				BreakOnSuccess: true,
 				Cb: func(next interface{}, message interface{}) (bool, error) {
 					if unk, ok := next.(IDataShutDown.IDataShutDown); ok {
@@ -173,7 +171,6 @@ func (self *Service) goStart(data IConnectionSlideData) {
 				},
 			},
 			{
-				PubSubHandler:  true,
 				BreakOnSuccess: false,
 				Cb: func(next interface{}, message interface{}) (bool, error) {
 					if sm, ok := next.(ISendMessage.ISendMessage); ok {
@@ -195,7 +192,7 @@ loop:
 			if !ok {
 				return
 			}
-			b, err := channelHandlerCallback(messageReceived, false)
+			b, err := channelHandlerCallback(messageReceived)
 			if err != nil || b {
 				return
 			}
@@ -203,7 +200,7 @@ loop:
 			if !ok {
 				return
 			}
-			b, err := channelHandlerCallback(messageReceived, true)
+			b, err := channelHandlerCallback(messageReceived)
 			if err != nil || b {
 				return
 			}
