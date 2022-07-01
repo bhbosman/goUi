@@ -121,39 +121,12 @@ func (self *Service) BuildApp(
 		},
 	)
 
-	s := &ssss{pages: pages}
+	s := NewPagePaintToggle(pages)
 	pages.SetChangedFunc(s.SetChangedFunc)
 	page, item := pages.GetFrontPage()
 	s.setCurrent(page, item)
 
 	return ui.NewPrimitiveWithCloser(layout, closers), nil
-}
-
-type ssss struct {
-	pages *tview.Pages
-	page  string
-	item  tview.Primitive
-}
-
-func (self *ssss) SetChangedFunc() {
-	page, item := self.pages.GetFrontPage()
-	self.setCurrent(page, item)
-}
-
-func (self *ssss) setCurrent(page string, item tview.Primitive) {
-	if self.item != nil {
-		if screenDrawToggle, ok := self.item.(ui.IScreenDrawToggle); ok {
-			screenDrawToggle.Toggle(false)
-		}
-	}
-	self.page = page
-	self.item = item
-
-	if self.item != nil {
-		if screenDrawToggle, ok := self.item.(ui.IScreenDrawToggle); ok {
-			screenDrawToggle.Toggle(true)
-		}
-	}
 }
 
 func NewService(pubSub *pubsub.PubSub) *Service {
