@@ -138,7 +138,6 @@ type ssss struct {
 func (self *ssss) SetChangedFunc() {
 	page, item := self.pages.GetFrontPage()
 	self.setCurrent(page, item)
-
 }
 
 func (self *ssss) setCurrent(page string, item tview.Primitive) {
@@ -155,7 +154,6 @@ func (self *ssss) setCurrent(page string, item tview.Primitive) {
 			screenDrawToggle.Toggle(true)
 		}
 	}
-
 }
 
 func NewService(pubSub *pubsub.PubSub) *Service {
