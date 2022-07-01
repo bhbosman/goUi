@@ -1,7 +1,6 @@
-package UiService
+package ui
 
 import (
-	"github.com/bhbosman/goUi/ui"
 	"github.com/rivo/tview"
 )
 
@@ -19,12 +18,12 @@ func NewPagePaintToggle(pages *tview.Pages) *PagePaintToggle {
 
 func (self *PagePaintToggle) SetChangedFunc() {
 	page, item := self.pages.GetFrontPage()
-	self.setCurrent(page, item)
+	self.SetCurrent(page, item)
 }
 
-func (self *PagePaintToggle) setCurrent(page string, item tview.Primitive) {
+func (self *PagePaintToggle) SetCurrent(page string, item tview.Primitive) {
 	if self.item != nil {
-		if screenDrawToggle, ok := self.item.(ui.IScreenDrawToggle); ok {
+		if screenDrawToggle, ok := self.item.(IScreenDrawToggle); ok {
 			screenDrawToggle.Toggle(false)
 		}
 	}
@@ -32,7 +31,7 @@ func (self *PagePaintToggle) setCurrent(page string, item tview.Primitive) {
 	self.item = item
 
 	if self.item != nil {
-		if screenDrawToggle, ok := self.item.(ui.IScreenDrawToggle); ok {
+		if screenDrawToggle, ok := self.item.(IScreenDrawToggle); ok {
 			screenDrawToggle.Toggle(true)
 		}
 	}

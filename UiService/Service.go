@@ -121,10 +121,10 @@ func (self *Service) BuildApp(
 		},
 	)
 
-	s := NewPagePaintToggle(pages)
+	s := ui.NewPagePaintToggle(pages)
 	pages.SetChangedFunc(s.SetChangedFunc)
 	page, item := pages.GetFrontPage()
-	s.setCurrent(page, item)
+	s.SetCurrent(page, item)
 
 	return ui.NewPrimitiveWithCloser(layout, closers), nil
 }
