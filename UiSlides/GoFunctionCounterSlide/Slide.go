@@ -17,7 +17,9 @@ type Slide struct {
 func (self *Slide) Toggle(b bool) {
 	self.canDraw = b
 	if b {
-		self.app.ForceDraw()
+		go func() {
+			self.SetConnectionListChange(self.names)
+		}()
 	}
 }
 
