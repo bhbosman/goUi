@@ -6,10 +6,19 @@ import (
 )
 
 type Slide struct {
-	next  tview.Primitive
-	app   *tview.Application
-	table *tview.Table
-	plate *tablePlate
+	next    tview.Primitive
+	app     *tview.Application
+	table   *tview.Table
+	plate   *tablePlate
+	canDraw bool
+	names   []string
+}
+
+func (self *Slide) Toggle(b bool) {
+	self.canDraw = b
+	if b {
+		self.app.ForceDraw()
+	}
 }
 
 func NewSlide(app *tview.Application) *Slide {
@@ -70,8 +79,17 @@ func (self *Slide) init() {
 }
 
 func (self *Slide) SetConnectionListChange(names []string) {
-	self.app.QueueUpdateDraw(func() {
-		self.plate = newTablePlate(names)
-		self.table.SetContent(self.plate)
-	})
+	self.names = names
+	if self.canDraw {
+		self.app.QueueUpdate(
+			func() {
+				self.plate = newTablePlate(self.names)
+				self.table.SetContent(self.plate)
+				//
+				if self.canDraw {
+					self.app.ForceDraw()
+				}
+			},
+		)
+	}
 }

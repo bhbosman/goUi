@@ -21,7 +21,9 @@ type connectionManagerSlide struct {
 
 func (self *connectionManagerSlide) Toggle(b bool) {
 	self.canDraw = b
-	self.app.ForceDraw()
+	if b {
+		self.app.ForceDraw()
+	}
 }
 
 func (self *connectionManagerSlide) UpdateContent() error {
