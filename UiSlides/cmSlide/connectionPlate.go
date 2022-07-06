@@ -28,7 +28,11 @@ func (self *connectionPlate) GetCell(row, column int) *tview.TableCell {
 	default:
 		switch column {
 		case 1:
-			return tview.NewTableCell(self.list[row-1].Id)
+			n := row - 1
+			c := len(self.list)
+			if c > n {
+				return tview.NewTableCell(self.list[row-1].Id)
+			}
 		}
 	}
 	return emptyCell
