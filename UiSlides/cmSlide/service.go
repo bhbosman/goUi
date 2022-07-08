@@ -154,14 +154,14 @@ func (self *Service) goStart(data IConnectionSlideData) {
 		data,
 		[]ChannelHandler.ChannelHandler{
 			{
-				BreakOnSuccess: false,
+				//BreakOnSuccess: false,
 				Cb: func(next interface{}, message interface{}) (bool, error) {
 					rr, e := ISendMessage.ChannelEventsForISendMessage(next.(ISendMessage.ISendMessage), message)
 					return rr, e
 				},
 			},
 			{
-				BreakOnSuccess: false,
+				//BreakOnSuccess: false,
 				Cb: func(next interface{}, message interface{}) (bool, error) {
 					if sm, ok := next.(ISendMessage.ISendMessage); ok {
 						_ = sm.Send(message)

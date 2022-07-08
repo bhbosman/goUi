@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type connectionManagerSlide struct {
+type slide struct {
 	service         IConnectionSlideService
 	connectionList  *tview.Table
 	table           *tview.Table
@@ -19,58 +19,58 @@ type connectionManagerSlide struct {
 	connectionPlate *connectionPlate
 }
 
-func (self *connectionManagerSlide) Toggle(b bool) {
+func (self *slide) Toggle(b bool) {
 	self.canDraw = b
 	if b {
 		self.app.ForceDraw()
 	}
 }
 
-func (self *connectionManagerSlide) UpdateContent() error {
+func (self *slide) UpdateContent() error {
 	return nil
 }
 
-func (self *connectionManagerSlide) Close() error {
+func (self *slide) Close() error {
 	return nil
 }
 
-func (self *connectionManagerSlide) Draw(screen tcell.Screen) {
+func (self *slide) Draw(screen tcell.Screen) {
 	if self.canDraw {
 		self.next.Draw(screen)
 	}
 }
 
-func (self *connectionManagerSlide) GetRect() (int, int, int, int) {
+func (self *slide) GetRect() (int, int, int, int) {
 	return self.next.GetRect()
 }
 
-func (self *connectionManagerSlide) SetRect(x, y, width, height int) {
+func (self *slide) SetRect(x, y, width, height int) {
 	self.next.SetRect(x, y, width, height)
 }
 
-func (self *connectionManagerSlide) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+func (self *slide) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
 	return self.next.InputHandler()
 }
 
-func (self *connectionManagerSlide) Focus(delegate func(p tview.Primitive)) {
+func (self *slide) Focus(delegate func(p tview.Primitive)) {
 	self.next.Focus(delegate)
 }
 
-func (self *connectionManagerSlide) HasFocus() bool {
+func (self *slide) HasFocus() bool {
 	return self.next.HasFocus()
 }
 
-func (self *connectionManagerSlide) Blur() {
+func (self *slide) Blur() {
 	self.next.Blur()
 }
 
 type MouseHandlerCallback = func(action tview.MouseAction, event *tcell.EventMouse, setFocus func(p tview.Primitive)) (consumed bool, capture tview.Primitive)
 
-func (self *connectionManagerSlide) MouseHandler() MouseHandlerCallback {
+func (self *slide) MouseHandler() MouseHandlerCallback {
 	return self.next.MouseHandler()
 }
 
-func (self *connectionManagerSlide) SetConnectionListChange(list []IdAndName) {
+func (self *slide) SetConnectionListChange(list []IdAndName) {
 	self.app.QueueUpdate(
 		func() {
 			self.connectionPlate = newConnectionPlace(list)
@@ -88,7 +88,7 @@ func (self *connectionManagerSlide) SetConnectionListChange(list []IdAndName) {
 	)
 }
 
-func (self *connectionManagerSlide) SetConnectionInstanceChange(data ConnectionInstanceData) {
+func (self *slide) SetConnectionInstanceChange(data ConnectionInstanceData) {
 	self.app.QueueUpdate(
 		func() {
 			row, _ := self.connectionList.GetSelection()
@@ -113,7 +113,7 @@ func (self *connectionManagerSlide) SetConnectionInstanceChange(data ConnectionI
 	)
 }
 
-func (self *connectionManagerSlide) init() {
+func (self *slide) init() {
 	self.connectionList = tview.NewTable() //.ShowSecondaryText(true)
 	self.connectionList.SetSelectionChangedFunc(
 		func(row, column int) {
@@ -185,11 +185,11 @@ func (self *connectionManagerSlide) init() {
 
 }
 
-func NewConnectionSlide(
+func newConnectionSlide(
 	app *tview.Application,
 	service *Service,
-) (*connectionManagerSlide, error) {
-	result := &connectionManagerSlide{
+) (*slide, error) {
+	result := &slide{
 		service: service,
 		app:     app,
 	}

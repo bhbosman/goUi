@@ -18,7 +18,7 @@ func Provide() fx.Option {
 					Service GoFunctionCounter.IService
 				},
 			) (ui2.ISlideFactory, error) {
-				return NewCoverSlideFactory(
+				return newGoFunctionSideFactory(
 					params.App,
 					params.Service,
 				), nil

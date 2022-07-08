@@ -76,7 +76,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 					},
 				) (ui.ISlideFactory, error) {
 
-					return NewFactory(
+					return newFactory(
 						params.App,
 						params.Service,
 					)
