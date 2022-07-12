@@ -104,9 +104,12 @@ func (self *Data) handleConnectionClosed(message *model.ConnectionClosed) error 
 
 func (self *Data) handleConnectionCreated(message *model.ConnectionCreated) error {
 	self.ConnectionDataMap[message.ConnectionId] = &ConnectionInstanceData{
-		isDirty:      true,
-		ConnectionId: message.ConnectionId,
-		Name:         message.ConnectionName,
+		isDirty:        true,
+		ConnectionId:   message.ConnectionId,
+		Name:           message.ConnectionName,
+		CancelFunc:     message.CancelFunc,
+		CancelContext:  message.CancelContext,
+		ConnectionTime: message.ConnectionTime,
 	}
 	self.connectionListIsDirty = true
 	return nil
