@@ -120,12 +120,12 @@ func (self *slide) init() {
 			row, _ = self.connectionList.GetSelection()
 			if item, ok := self.connectionPlate.GetItem(row); ok {
 				_ = self.service.Send(
-					&PublishInstanceDataFor{
+					&publishInstanceDataFor{
 						Id:   item.Id,
 						Name: item.Name,
-					})
+					},
+				)
 			}
-
 		},
 	)
 	self.connectionList.SetSelectedFunc(
@@ -139,9 +139,11 @@ func (self *slide) init() {
 	self.connectionList.SetFixed(1, 1)
 	self.actionList = tview.NewList().ShowSecondaryText(false)
 	self.actionList.SetBorder(true).SetTitle("Actions")
-	self.actionList.AddItem("..", "", 0, func() {
-		self.app.SetFocus(self.connectionList)
-	})
+	self.actionList.AddItem("..", "", 0,
+		func() {
+			self.app.SetFocus(self.connectionList)
+		},
+	)
 	self.actionList.AddItem("Disconnect", "", 0,
 		func() {
 			row, _ := self.connectionList.GetSelection()
@@ -153,12 +155,10 @@ func (self *slide) init() {
 					),
 				)
 			}
-
-			// Todo: this throws a panic on the first line. need to fix tview
-			//self.connectionList.RemoveItem(index)
 			self.actionList.SetCurrentItem(0)
 			self.app.SetFocus(self.connectionList)
-		})
+		},
+	)
 	self.table = tview.NewTable()
 	self.table.SetTitle("Connection Stack").SetBorder(true)
 	self.textView = tview.NewTextView()

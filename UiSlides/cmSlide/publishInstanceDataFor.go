@@ -1,6 +1,6 @@
 package cmSlide
 
-type PublishInstanceDataFor struct {
+type publishInstanceDataFor struct {
 	Id   string
 	Name string
 }

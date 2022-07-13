@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-type Data struct {
+type data struct {
 	connectionListIsDirty      bool
 	ConnectionDataMap          map[string]*ConnectionInstanceData
 	messageRouter              *messageRouter.MessageRouter
@@ -16,12 +16,12 @@ type Data struct {
 	onConnectionInstanceChange func(data ConnectionInstanceData)
 }
 
-func (self *Data) ShutDown() error {
+func (self *data) ShutDown() error {
 	return nil
 }
 
-func NewData() (*Data, error) {
-	result := &Data{
+func NewData() (*data, error) {
+	result := &data{
 		ConnectionDataMap: make(map[string]*ConnectionInstanceData),
 		messageRouter:     messageRouter.NewMessageRouter(),
 	}
@@ -36,20 +36,20 @@ func NewData() (*Data, error) {
 	return result, nil
 }
 
-func (self *Data) Send(data interface{}) error {
+func (self *data) Send(data interface{}) error {
 	_, err := self.messageRouter.Route(data)
 	return err
 }
 
-func (self *Data) handleRefreshDataStart(message *goConnectionManager.RefreshDataStart) {
+func (self *data) handleRefreshDataStart(message *goConnectionManager.RefreshDataStart) {
 
 }
 
-func (self *Data) handleRefreshDataStop(message *goConnectionManager.RefreshDataStop) {
+func (self *data) handleRefreshDataStop(message *goConnectionManager.RefreshDataStop) {
 
 }
 
-func (self *Data) handleDisconnectConnection(message *DisconnectConnection) error {
+func (self *data) handleDisconnectConnection(message *DisconnectConnection) error {
 	if info, ok := self.ConnectionDataMap[message.ConnectionId]; ok {
 		if info.CancelFunc != nil {
 			info.CancelFunc()
@@ -57,13 +57,14 @@ func (self *Data) handleDisconnectConnection(message *DisconnectConnection) erro
 	}
 	return nil
 }
-func (self *Data) handlePublishInstanceDataFor(message *PublishInstanceDataFor) error {
+func (self *data) handlePublishInstanceDataFor(message *publishInstanceDataFor) error {
 	if info, ok := self.ConnectionDataMap[message.Id]; ok {
 		self.DoConnectionInstanceChange(info)
 	}
 	return nil
 }
-func (self *Data) handleEmptyQueue(_ *messages.EmptyQueue) error {
+
+func (self *data) handleEmptyQueue(_ *messages.EmptyQueue) {
 	didSomething := self.connectionListIsDirty
 	if self.connectionListIsDirty {
 		self.DoConnectionListChange()
@@ -76,33 +77,26 @@ func (self *Data) handleEmptyQueue(_ *messages.EmptyQueue) error {
 			connectionData.isDirty = false
 		}
 	}
-	if !didSomething {
-		d := 233
-		d++
-	}
-	return nil
 }
 
-func (self *Data) handleConnectionState(message *model.ConnectionState) error {
-	if data, ok := self.ConnectionDataMap[message.ConnectionId]; ok {
-		data.isDirty = true
-		data.CancelContext = message.CancelContext
-		data.CancelFunc = message.CancelFunc
-		data.Name = message.Name
-		//data.Status = message.Status
-		data.ConnectionTime = message.ConnectionTime
-		data.Grid = message.Grid
+func (self *data) handleConnectionState(message *model.ConnectionState) {
+	if dataInstance, ok := self.ConnectionDataMap[message.ConnectionId]; ok {
+		dataInstance.isDirty = true
+		dataInstance.CancelContext = message.CancelContext
+		dataInstance.CancelFunc = message.CancelFunc
+		dataInstance.Name = message.Name
+		dataInstance.ConnectionTime = message.ConnectionTime
+		dataInstance.Grid = message.Grid
 	}
-	return nil
 }
 
-func (self *Data) handleConnectionClosed(message *model.ConnectionClosed) error {
+func (self *data) handleConnectionClosed(message *model.ConnectionClosed) error {
 	delete(self.ConnectionDataMap, message.ConnectionId)
 	self.connectionListIsDirty = true
 	return nil
 }
 
-func (self *Data) handleConnectionCreated(message *model.ConnectionCreated) error {
+func (self *data) handleConnectionCreated(message *model.ConnectionCreated) error {
 	self.ConnectionDataMap[message.ConnectionId] = &ConnectionInstanceData{
 		isDirty:        true,
 		ConnectionId:   message.ConnectionId,
@@ -115,7 +109,7 @@ func (self *Data) handleConnectionCreated(message *model.ConnectionCreated) erro
 	return nil
 }
 
-func (self *Data) DoConnectionListChange() {
+func (self *data) DoConnectionListChange() {
 	if self.onConnectionListChange != nil {
 		ss := make([]string, 0, len(self.ConnectionDataMap))
 
@@ -137,15 +131,15 @@ func (self *Data) DoConnectionListChange() {
 		self.onConnectionListChange(cbData)
 	}
 }
-func (self *Data) DoConnectionInstanceChange(data *ConnectionInstanceData) {
+func (self *data) DoConnectionInstanceChange(data *ConnectionInstanceData) {
 	if self.onConnectionInstanceChange != nil {
 		self.onConnectionInstanceChange(*data)
 	}
 }
 
-func (self *Data) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
+func (self *data) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
 	self.onConnectionInstanceChange = cb
 }
-func (self *Data) SetConnectionListChange(cb func(connectionList []IdAndName)) {
+func (self *data) SetConnectionListChange(cb func(connectionList []IdAndName)) {
 	self.onConnectionListChange = cb
 }

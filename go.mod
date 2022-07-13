@@ -12,7 +12,7 @@ require (
 	github.com/rivo/tview v0.0.0-20220307222120-9994674d60a8
 	go.uber.org/fx v1.17.1
 	go.uber.org/multierr v1.6.0
-	go.uber.org/zap v1.21.0 // indirect
+	go.uber.org/zap v1.21.0
 )
 
 require github.com/bhbosman/goConnectionManager v0.0.0-00010101000000-000000000000
@@ -24,12 +24,15 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/dig v1.14.0 // indirect
+	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
 	golang.org/x/sys v0.0.0-20220318055525-2edf467146b5 // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
 
 replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b
+
+replace github.com/rivo/tview => ../tview
 
 replace github.com/golang/mock => ../gomock
 
