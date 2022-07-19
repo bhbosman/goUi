@@ -2,6 +2,7 @@ package cmSlide
 
 import (
 	"github.com/rivo/tview"
+	"strconv"
 )
 
 type connectionPlate struct {
@@ -17,6 +18,10 @@ func newConnectionPlace(list []IdAndName) *connectionPlate {
 var emptyCell *tview.TableCell = tview.NewTableCell("").SetSelectable(false)
 
 func (self *connectionPlate) GetCell(row, column int) *tview.TableCell {
+	if row == -1 || column == -1 {
+		return emptyCell
+	}
+
 	switch row {
 	case 0:
 		switch column {
@@ -27,6 +32,8 @@ func (self *connectionPlate) GetCell(row, column int) *tview.TableCell {
 		}
 	default:
 		switch column {
+		case 0:
+			return tview.NewTableCell(strconv.Itoa(row)).SetSelectable(false).SetAlign(tview.AlignRight)
 		case 1:
 			n := row - 1
 			c := len(self.list)
@@ -65,6 +72,11 @@ func (self *connectionPlate) Clear() {
 }
 
 func (self *connectionPlate) GetItem(row int) (IdAndName, bool) {
+
+	if row == -1 {
+		return IdAndName{}, false
+	}
+
 	index := row - 1
 	count := len(self.list)
 	if index >= 0 && count > index {

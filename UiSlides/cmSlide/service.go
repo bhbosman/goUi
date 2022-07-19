@@ -172,7 +172,16 @@ func (self *Service) goStart(data IConnectionSlideData) {
 		},
 		func() int {
 			return len(pubSubChannel) + len(self.cmdChannel)
-		})
+		},
+		//func(i interface{}) {
+		//	select {
+		//	case self.cmdChannel <- i:
+		//		break
+		//	default:
+		//		break
+		//	}
+		//},
+	)
 loop:
 	for {
 		select {

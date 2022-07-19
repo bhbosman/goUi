@@ -18,6 +18,10 @@ func newTablePlate(data []string) *tablePlate {
 }
 
 func (self *tablePlate) GetCell(row, column int) *tview.TableCell {
+	if row == -1 || column == -1 {
+		return tview.NewTableCell("")
+	}
+
 	switch row {
 	case 0:
 		switch column {

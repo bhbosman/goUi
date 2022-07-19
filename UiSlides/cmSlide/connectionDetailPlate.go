@@ -45,6 +45,10 @@ func newConnectionPlateContent(Grid []model.LineData) *connectionDetailPlateCont
 }
 
 func (self *connectionDetailPlateContent) GetCell(row, column int) *tview.TableCell {
+	if row == -1 || column == -1 {
+		return tview.NewTableCell("")
+	}
+
 	switch column {
 	case 0:
 		switch row {
