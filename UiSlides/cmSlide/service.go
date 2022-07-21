@@ -5,6 +5,7 @@ import (
 	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/ChannelHandler"
+	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/IFxService"
 	"github.com/bhbosman/gocommon/Services/ISendMessage"
 	"github.com/bhbosman/gocommon/Services/interfaces"
@@ -24,6 +25,7 @@ type Service struct {
 	ConnectionManagerHelper    goConnectionManager.IHelper
 	UniqueReferenceService     interfaces.IUniqueReferenceService
 	logger                     *zap.Logger
+	goFunctionCounter          GoFunctionCounter.IService
 }
 
 func (self *Service) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
@@ -41,6 +43,7 @@ func NewService(
 	ConnectionManagerHelper goConnectionManager.IHelper,
 	UniqueReferenceService interfaces.IUniqueReferenceService,
 	logger *zap.Logger,
+	goFunctionCounter GoFunctionCounter.IService,
 ) (*Service, error) {
 	ctx, cancelFunc := context.WithCancel(parentContext)
 	channel := make(chan interface{}, 32)
@@ -54,6 +57,7 @@ func NewService(
 		ConnectionManagerHelper: ConnectionManagerHelper,
 		UniqueReferenceService:  UniqueReferenceService,
 		logger:                  logger,
+		goFunctionCounter:       goFunctionCounter,
 	}, nil
 }
 
@@ -117,7 +121,8 @@ func (self *Service) goStart(data IConnectionSlideData) {
 		}
 	}(self.cmdChannel)
 
-	pubSubChannel := self.pubSub.Sub(self.ConnectionManagerHelper.PublishChannelName())
+	pubSubChannel := make(chan interface{}, 32)
+	self.pubSub.AddSub(pubSubChannel, self.ConnectionManagerHelper.PublishChannelName())
 	defer func(pubSubChannel chan interface{}) {
 		// unsubscribe on different go routine to avoid deadlock
 		go func(pubSubChannel chan interface{}) {
@@ -128,7 +133,9 @@ func (self *Service) goStart(data IConnectionSlideData) {
 	}(pubSubChannel)
 
 	ss := self.UniqueReferenceService.Next("ConnectionManagerReceiver")
-	refreshSubChannel := self.pubSub.Sub(ss)
+	refreshSubChannel := make(chan interface{}, 32)
+
+	self.pubSub.AddSub(refreshSubChannel, ss)
 	go func(refreshSubChannel chan interface{}) {
 		for m := range refreshSubChannel {
 			switch v := m.(type) {

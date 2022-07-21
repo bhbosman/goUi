@@ -50,3 +50,5 @@ replace github.com/bhbosman/gocommon => ../gocommon
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
+
+replace github.com/cskr/pubsub => ../pubsub

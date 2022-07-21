@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/goUi/ui"
+	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/cskr/pubsub"
 	"github.com/rivo/tview"
@@ -46,6 +47,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 					ConnectionManagerHelper goConnectionManager.IHelper
 					UniqueReferenceService  interfaces.IUniqueReferenceService
 					Logger                  *zap.Logger
+					GoFunctionCounter       GoFunctionCounter.IService
 				}) (*Service, error) {
 					s, e := NewService(
 						params.ApplicationContext,
@@ -56,6 +58,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 						params.ConnectionManagerHelper,
 						params.UniqueReferenceService,
 						params.Logger,
+						params.GoFunctionCounter,
 					)
 					if e != nil {
 						return nil, e
