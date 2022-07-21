@@ -2,6 +2,7 @@ package cmSlide
 
 import (
 	"context"
+	"github.com/bhbosman/goCommsDefinitions"
 	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/ChannelHandler"
 	"github.com/bhbosman/gocommon/Services/IFxService"
@@ -173,6 +174,7 @@ func (self *Service) goStart(data IConnectionSlideData) {
 		func() int {
 			return len(pubSubChannel) + len(self.cmdChannel)
 		},
+		goCommsDefinitions.CreateTryNextFunc(self.cmdChannel),
 		//func(i interface{}) {
 		//	select {
 		//	case self.cmdChannel <- i:
