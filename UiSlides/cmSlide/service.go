@@ -121,34 +121,40 @@ func (self *Service) goStart(data IConnectionSlideData) {
 		}
 	}(self.cmdChannel)
 
-	pubSubChannel := make(chan interface{}, 32)
+	pubSubChannel := pubsub.NewChannelSubscription(32)
 	self.pubSub.AddSub(pubSubChannel, self.ConnectionManagerHelper.PublishChannelName())
-	defer func(pubSubChannel chan interface{}) {
+	defer func(pubSubChannel *pubsub.ChannelSubscription) {
 		// unsubscribe on different go routine to avoid deadlock
-		go func(pubSubChannel chan interface{}) {
+		go func(pubSubChannel *pubsub.ChannelSubscription) {
 			self.pubSub.Unsub(pubSubChannel)
-			for range pubSubChannel {
-			}
+			pubSubChannel.Flush()
 		}(pubSubChannel)
 	}(pubSubChannel)
 
 	ss := self.UniqueReferenceService.Next("ConnectionManagerReceiver")
-	refreshSubChannel := make(chan interface{}, 32)
+	refreshSubChannel := pubsub.NewChannelSubscription(32)
 
 	self.pubSub.AddSub(refreshSubChannel, ss)
-	go func(refreshSubChannel chan interface{}) {
-		for m := range refreshSubChannel {
-			switch v := m.(type) {
-			case *goConnectionManager.RefreshDataStart:
-				_ = self.Send(v)
-				break
-			case *goConnectionManager.RefreshDataStop:
-				_ = self.Send(v)
-				self.pubSub.Unsub(refreshSubChannel, ss)
-				break
-			default:
-				_ = self.Send(v)
-				break
+	go func(refreshSubChannel *pubsub.ChannelSubscription) {
+	loop:
+		for {
+			select {
+			case unk, ok := <-refreshSubChannel.Data:
+				if !ok {
+					break loop
+				}
+				switch v := unk.(type) {
+				case *goConnectionManager.RefreshDataStart:
+					_ = self.Send(v)
+					break
+				case *goConnectionManager.RefreshDataStop:
+					_ = self.Send(v)
+					self.pubSub.Unsub(refreshSubChannel, ss)
+					break
+				default:
+					_ = self.Send(v)
+					break
+				}
 			}
 		}
 	}(refreshSubChannel)
@@ -179,7 +185,7 @@ func (self *Service) goStart(data IConnectionSlideData) {
 			},
 		},
 		func() int {
-			return len(pubSubChannel) + len(self.cmdChannel)
+			return pubSubChannel.Count() + len(self.cmdChannel)
 		},
 		goCommsDefinitions.CreateTryNextFunc(self.cmdChannel),
 		//func(i interface{}) {
@@ -210,7 +216,7 @@ loop:
 			if err != nil || b {
 				return
 			}
-		case messageReceived, ok = <-pubSubChannel:
+		case messageReceived, ok = <-pubSubChannel.Data:
 			if !ok {
 				return
 			}
