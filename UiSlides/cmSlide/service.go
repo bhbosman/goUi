@@ -7,8 +7,8 @@ import (
 	"github.com/bhbosman/gocommon/ChannelHandler"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/IFxService"
-	"github.com/bhbosman/gocommon/Services/ISendMessage"
 	"github.com/bhbosman/gocommon/Services/interfaces"
+	"github.com/bhbosman/gocommon/services/ISendMessage"
 	"github.com/cskr/pubsub"
 	"go.uber.org/zap"
 )

@@ -1,6 +1,6 @@
 package cmSlide
 
-import "github.com/bhbosman/gocommon/Services/ISendMessage"
+import "github.com/bhbosman/gocommon/services/ISendMessage"
 
 type IConnectionSlide interface {
 	SetConnectionInstanceChange(cb func(data ConnectionInstanceData))
