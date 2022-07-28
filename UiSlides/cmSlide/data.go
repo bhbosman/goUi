@@ -37,8 +37,8 @@ func NewData() (*data, error) {
 }
 
 func (self *data) Send(data interface{}) error {
-	_, err := self.messageRouter.Route(data)
-	return err
+	self.messageRouter.Route(data)
+	return nil
 }
 
 func (self *data) handleRefreshDataStart(message *goConnectionManager.RefreshDataStart) {
