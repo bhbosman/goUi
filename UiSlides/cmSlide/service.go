@@ -123,29 +123,10 @@ func (self *Service) ServiceName() string {
 func (self *Service) goStart(data IConnectionSlideData) {
 	self.subscribeChannel = pubsub.NewNextFuncSubscription(goCommsDefinitions.CreateNextFunc(self.cmdChannel))
 	self.pubSub.AddSub(self.subscribeChannel, self.ConnectionManagerHelper.PublishChannelName())
-
-	ss := self.UniqueReferenceService.Next("ConnectionManagerReceiver")
-	refreshSubChannel := pubsub.NewChannelSubscription(32)
-
-	self.pubSub.AddSub(refreshSubChannel, ss)
-	go func(refreshSubChannel *pubsub.ChannelSubscription) {
-	loop:
-		for {
-			select {
-			case unk, ok := <-refreshSubChannel.Data:
-				if !ok {
-					break loop
-				}
-				switch v := unk.(type) {
-				default:
-					_ = self.Send(v)
-					break
-				}
-			}
-		}
-	}(refreshSubChannel)
 	_ = self.ConnectionManager.Send(
-		&goConnectionManager.RefreshDataTo{},
+		&goConnectionManager.RefreshDataTo{
+			PubSubBag: self.subscribeChannel,
+		},
 	)
 
 	var messageReceived interface{}
