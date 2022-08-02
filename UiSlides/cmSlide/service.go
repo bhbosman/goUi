@@ -102,13 +102,13 @@ func (self *Service) shutdown(_ context.Context) error {
 }
 
 func (self *Service) start(_ context.Context) error {
-	data, err := self.onData()
-	data.SetConnectionListChange(self.onConnectionListChange)
-	data.SetConnectionInstanceChange(self.onConnectionInstanceChange)
+	dataInstance, err := self.onData()
+	dataInstance.SetConnectionListChange(self.onConnectionListChange)
+	dataInstance.SetConnectionInstanceChange(self.onConnectionInstanceChange)
 	if err != nil {
 		return err
 	}
-	go self.goStart(data)
+	go self.goStart(dataInstance)
 	return nil
 }
 
@@ -120,7 +120,7 @@ func (self *Service) ServiceName() string {
 	return "ConnectionSlideService"
 }
 
-func (self *Service) goStart(data IConnectionSlideData) {
+func (self *Service) goStart(dataInstance IConnectionSlideData) {
 	self.subscribeChannel = pubsub.NewNextFuncSubscription(goCommsDefinitions.CreateNextFunc(self.cmdChannel))
 	self.pubSub.AddSub(self.subscribeChannel, self.ConnectionManagerHelper.PublishChannelName())
 	_ = self.ConnectionManager.Send(
@@ -134,7 +134,7 @@ func (self *Service) goStart(data IConnectionSlideData) {
 
 	channelHandlerCallback := ChannelHandler.CreateChannelHandlerCallback(
 		self.ctx,
-		data,
+		dataInstance,
 		[]ChannelHandler.ChannelHandler{
 			{
 				Cb: func(next interface{}, message interface{}) (bool, error) {
@@ -160,7 +160,7 @@ loop:
 	for {
 		select {
 		case <-self.ctx.Done():
-			err := data.ShutDown()
+			err := dataInstance.ShutDown()
 			if err != nil {
 				self.logger.Error(
 					"error on done",
