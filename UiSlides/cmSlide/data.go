@@ -1,7 +1,6 @@
 package cmSlide
 
 import (
-	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/messageRouter"
 	"github.com/bhbosman/gocommon/messages"
 	"github.com/bhbosman/gocommon/model"
@@ -31,22 +30,12 @@ func NewData() (*data, error) {
 	_ = result.messageRouter.Add(result.handleConnectionClosed)
 	_ = result.messageRouter.Add(result.handlePublishInstanceDataFor)
 	_ = result.messageRouter.Add(result.handleDisconnectConnection)
-	_ = result.messageRouter.Add(result.handleRefreshDataStart)
-	_ = result.messageRouter.Add(result.handleRefreshDataStop)
 	return result, nil
 }
 
 func (self *data) Send(data interface{}) error {
 	self.messageRouter.Route(data)
 	return nil
-}
-
-func (self *data) handleRefreshDataStart(message *goConnectionManager.RefreshDataStart) {
-
-}
-
-func (self *data) handleRefreshDataStop(message *goConnectionManager.RefreshDataStop) {
-
 }
 
 func (self *data) handleDisconnectConnection(message *DisconnectConnection) error {

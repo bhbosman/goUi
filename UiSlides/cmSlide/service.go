@@ -8,6 +8,7 @@ import (
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
 	"github.com/bhbosman/gocommon/Services/IFxService"
 	"github.com/bhbosman/gocommon/Services/interfaces"
+	"github.com/bhbosman/gocommon/pubSub"
 	"github.com/bhbosman/gocommon/services/ISendMessage"
 	"github.com/cskr/pubsub"
 	"go.uber.org/zap"
@@ -23,9 +24,12 @@ type Service struct {
 	cmdChannel                 chan interface{}
 	pubSub                     *pubsub.PubSub
 	ConnectionManagerHelper    goConnectionManager.IHelper
-	UniqueReferenceService     interfaces.IUniqueReferenceService
-	logger                     *zap.Logger
-	goFunctionCounter          GoFunctionCounter.IService
+	ConnectionManager          goConnectionManager.IService
+	subscribeChannel           *pubsub.NextFuncSubscription
+
+	UniqueReferenceService interfaces.IUniqueReferenceService
+	logger                 *zap.Logger
+	goFunctionCounter      GoFunctionCounter.IService
 }
 
 func (self *Service) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
@@ -44,6 +48,7 @@ func NewService(
 	UniqueReferenceService interfaces.IUniqueReferenceService,
 	logger *zap.Logger,
 	goFunctionCounter GoFunctionCounter.IService,
+	ConnectionManager goConnectionManager.IService,
 ) (*Service, error) {
 	ctx, cancelFunc := context.WithCancel(parentContext)
 	channel := make(chan interface{}, 32)
@@ -58,6 +63,7 @@ func NewService(
 		UniqueReferenceService:  UniqueReferenceService,
 		logger:                  logger,
 		goFunctionCounter:       goFunctionCounter,
+		ConnectionManager:       ConnectionManager,
 	}, nil
 }
 
@@ -92,7 +98,7 @@ func (self *Service) OnStop(ctx context.Context) error {
 
 func (self *Service) shutdown(_ context.Context) error {
 	self.cancelFunc()
-	return nil
+	return pubSub.Unsubscribe("FMD Manager Service", self.pubSub, self.goFunctionCounter, self.subscribeChannel)
 }
 
 func (self *Service) start(_ context.Context) error {
@@ -115,21 +121,8 @@ func (self *Service) ServiceName() string {
 }
 
 func (self *Service) goStart(data IConnectionSlideData) {
-	defer func(cmdChannel <-chan interface{}) {
-		//flush
-		for range cmdChannel {
-		}
-	}(self.cmdChannel)
-
-	pubSubChannel := pubsub.NewChannelSubscription(32)
-	self.pubSub.AddSub(pubSubChannel, self.ConnectionManagerHelper.PublishChannelName())
-	defer func(pubSubChannel *pubsub.ChannelSubscription) {
-		// unsubscribe on different go routine to avoid deadlock
-		go func(pubSubChannel *pubsub.ChannelSubscription) {
-			self.pubSub.Unsub(pubSubChannel)
-			pubSubChannel.Flush()
-		}(pubSubChannel)
-	}(pubSubChannel)
+	self.subscribeChannel = pubsub.NewNextFuncSubscription(goCommsDefinitions.CreateNextFunc(self.cmdChannel))
+	self.pubSub.AddSub(self.subscribeChannel, self.ConnectionManagerHelper.PublishChannelName())
 
 	ss := self.UniqueReferenceService.Next("ConnectionManagerReceiver")
 	refreshSubChannel := pubsub.NewChannelSubscription(32)
@@ -144,13 +137,6 @@ func (self *Service) goStart(data IConnectionSlideData) {
 					break loop
 				}
 				switch v := unk.(type) {
-				case *goConnectionManager.RefreshDataStart:
-					_ = self.Send(v)
-					break
-				case *goConnectionManager.RefreshDataStop:
-					_ = self.Send(v)
-					self.pubSub.Unsub(refreshSubChannel, ss)
-					break
 				default:
 					_ = self.Send(v)
 					break
@@ -158,7 +144,9 @@ func (self *Service) goStart(data IConnectionSlideData) {
 			}
 		}
 	}(refreshSubChannel)
-	self.ConnectionManagerHelper.RefreshData(ss)
+	_ = self.ConnectionManager.Send(
+		&goConnectionManager.RefreshDataTo{},
+	)
 
 	var messageReceived interface{}
 	var ok bool
@@ -185,17 +173,9 @@ func (self *Service) goStart(data IConnectionSlideData) {
 			},
 		},
 		func() int {
-			return pubSubChannel.Count() + len(self.cmdChannel)
+			return len(self.cmdChannel)
 		},
 		goCommsDefinitions.CreateTryNextFunc(self.cmdChannel),
-		//func(i interface{}) {
-		//	select {
-		//	case self.cmdChannel <- i:
-		//		break
-		//	default:
-		//		break
-		//	}
-		//},
 	)
 loop:
 	for {
@@ -209,14 +189,6 @@ loop:
 			}
 			break loop
 		case messageReceived, ok = <-self.cmdChannel:
-			if !ok {
-				return
-			}
-			b, err := channelHandlerCallback(messageReceived)
-			if err != nil || b {
-				return
-			}
-		case messageReceived, ok = <-pubSubChannel.Data:
 			if !ok {
 				return
 			}

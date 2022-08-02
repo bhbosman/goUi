@@ -45,6 +45,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 					PubSub                  *pubsub.PubSub  `name:"Application"`
 					ApplicationContext      context.Context `name:"Application"`
 					ConnectionManagerHelper goConnectionManager.IHelper
+					ConnectionManager       goConnectionManager.IService
 					UniqueReferenceService  interfaces.IUniqueReferenceService
 					Logger                  *zap.Logger
 					GoFunctionCounter       GoFunctionCounter.IService
@@ -59,6 +60,7 @@ func ProvideConnectionManagerSlide() fx.Option {
 						params.UniqueReferenceService,
 						params.Logger,
 						params.GoFunctionCounter,
+						params.ConnectionManager,
 					)
 					if e != nil {
 						return nil, e
