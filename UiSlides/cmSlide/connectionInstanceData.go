@@ -14,4 +14,5 @@ type ConnectionInstanceData struct {
 	Name           string
 	ConnectionTime time.Time
 	Grid           []model.LineData
+	KeyValue       []model.KeyValue
 }

@@ -76,6 +76,7 @@ func (self *data) handleConnectionState(message *model.ConnectionState) {
 		dataInstance.Name = message.Name
 		dataInstance.ConnectionTime = message.ConnectionTime
 		dataInstance.Grid = message.Grid
+		dataInstance.KeyValue = message.KeyValue
 	}
 }
 
@@ -120,6 +121,7 @@ func (self *data) DoConnectionListChange() {
 		self.onConnectionListChange(cbData)
 	}
 }
+
 func (self *data) DoConnectionInstanceChange(data *ConnectionInstanceData) {
 	if self.onConnectionInstanceChange != nil {
 		self.onConnectionInstanceChange(*data)

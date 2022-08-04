@@ -9,12 +9,6 @@ type connectionPlate struct {
 	list []IdAndName
 }
 
-func newConnectionPlace(list []IdAndName) *connectionPlate {
-	return &connectionPlate{
-		list: list,
-	}
-}
-
 var emptyCell *tview.TableCell = tview.NewTableCell("").SetSelectable(false)
 
 func (self *connectionPlate) GetCell(row, column int) *tview.TableCell {
@@ -83,4 +77,10 @@ func (self *connectionPlate) GetItem(row int) (IdAndName, bool) {
 		return self.list[index], true
 	}
 	return IdAndName{}, false
+}
+
+func newConnectionPlace(list []IdAndName) *connectionPlate {
+	return &connectionPlate{
+		list: list,
+	}
 }

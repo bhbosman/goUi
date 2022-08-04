@@ -4,20 +4,22 @@ import (
 	"fmt"
 	"github.com/bhbosman/gocommon/model"
 	"github.com/rivo/tview"
+	"strconv"
 )
 
 func ByteCountSI(b int64) string {
-	const unit = 1000
-	if b < unit {
-		return fmt.Sprintf("%d B", b)
-	}
-	div, exp := int64(unit), 0
-	for n := b / unit; n >= unit; n /= unit {
-		div *= unit
-		exp++
-	}
-	return fmt.Sprintf("%.1f %cB",
-		float64(b)/float64(div), "kMGTPE"[exp])
+	return strconv.Itoa(int(b))
+	//const unit = 1000
+	//if b < unit {
+	//	return fmt.Sprintf("%d B", b)
+	//}
+	//div, exp := int64(unit), 0
+	//for n := b / unit; n >= unit; n /= unit {
+	//	div *= unit
+	//	exp++
+	//}
+	//return fmt.Sprintf("%.1f %cB",
+	//	float64(b)/float64(div), "kMGTPE"[exp])
 }
 
 func ByteCountIEC(b int64) string {
@@ -70,7 +72,11 @@ func (self *connectionDetailPlateContent) GetCell(row, column int) *tview.TableC
 		case 0:
 			return tview.NewTableCell("In(Other)")
 		default:
-			return tview.NewTableCell(ByteCountSI(self.Grid[row-1].InValue.OtherMsgCount)).
+			return tview.NewTableCell(
+				fmt.Sprintf("%v",
+					ByteCountSI(self.Grid[row-1].InValue.OtherMsgCountIn),
+				),
+			).
 				SetAlign(tview.AlignRight)
 		}
 	case 3:
@@ -78,7 +84,9 @@ func (self *connectionDetailPlateContent) GetCell(row, column int) *tview.TableC
 		case 0:
 			return tview.NewTableCell("In(RWS)")
 		default:
-			return tview.NewTableCell(ByteCountSI(self.Grid[row-1].InValue.RwsMsgCount)).
+			return tview.NewTableCell(
+				ByteCountSI(self.Grid[row-1].InValue.RwsMsgCountIn),
+			).
 				SetAlign(tview.AlignRight)
 		}
 	case 4:
@@ -109,7 +117,9 @@ func (self *connectionDetailPlateContent) GetCell(row, column int) *tview.TableC
 		case 0:
 			return tview.NewTableCell("In(Other)")
 		default:
-			return tview.NewTableCell(ByteCountSI(self.Grid[row-1].OutValue.OtherMsgCount)).
+			return tview.NewTableCell(
+				ByteCountSI(self.Grid[row-1].OutValue.OtherMsgCountOut),
+			).
 				SetAlign(tview.AlignRight)
 		}
 	case 8:
@@ -117,7 +127,9 @@ func (self *connectionDetailPlateContent) GetCell(row, column int) *tview.TableC
 		case 0:
 			return tview.NewTableCell("In(RWS)")
 		default:
-			return tview.NewTableCell(ByteCountSI(self.Grid[row-1].OutValue.RwsMsgCount)).
+			return tview.NewTableCell(
+				ByteCountSI(self.Grid[row-1].OutValue.RwsMsgCountOut),
+			).
 				SetAlign(tview.AlignRight)
 		}
 	case 9:

@@ -11,6 +11,7 @@ type slide struct {
 	service         IConnectionSlideService
 	connectionList  *tview.Table
 	table           *tview.Table
+	tableStrings    *tview.Table
 	textView        *tview.TextView
 	actionList      *tview.List
 	next            tview.Primitive
@@ -99,11 +100,20 @@ func (self *slide) SetConnectionInstanceChange(data ConnectionInstanceData) {
 						if tableData != nil {
 							self.table.SetContent(tableData)
 						}
-						self.textView.Clear()
-						_, _ = fmt.Fprintf(self.textView, "Name: %v\n", data.Name)
-						_, _ = fmt.Fprintf(self.textView, "Id: %v\n", data.ConnectionId)
-						_, _ = fmt.Fprintf(self.textView, "Connect Time: %v, (%v)\n", data.ConnectionTime.Format(time.RFC3339), time.Now().Sub(data.ConnectionTime))
 					}
+
+					if data.KeyValue != nil {
+						stringValueData := newStringsPlate(data.KeyValue)
+						if stringValueData != nil {
+							self.tableStrings.SetContent(stringValueData)
+							self.tableStrings.ScrollToBeginning()
+						}
+					}
+
+					self.textView.Clear()
+					_, _ = fmt.Fprintf(self.textView, "Name: %v\n", data.Name)
+					_, _ = fmt.Fprintf(self.textView, "Id: %v\n", data.ConnectionId)
+					_, _ = fmt.Fprintf(self.textView, "Connect Time: %v, (%v)\n", data.ConnectionTime.Format(time.RFC3339), time.Now().Sub(data.ConnectionTime))
 				}
 				if self.canDraw {
 					self.app.ForceDraw()
@@ -159,6 +169,11 @@ func (self *slide) init() {
 			self.app.SetFocus(self.connectionList)
 		},
 	)
+	self.tableStrings = tview.NewTable()
+	self.tableStrings.SetTitle("Strings")
+	self.tableStrings.SetBorder(true)
+	self.tableStrings.SetFixed(1, 1)
+
 	self.table = tview.NewTable()
 	self.table.SetTitle("Connection Stack").SetBorder(true)
 	self.textView = tview.NewTextView()
@@ -178,7 +193,9 @@ func (self *slide) init() {
 				AddItem(tview.NewFlex().
 					SetDirection(tview.FlexRow).
 					AddItem(self.textView, 5, 0, false).
-					AddItem(self.table, 0, 6, false), 0, 6, false),
+					AddItem(self.table, 10, 6, false).
+					AddItem(self.tableStrings, 0, 6, false),
+					0, 6, false),
 			0,
 			1,
 			true)
