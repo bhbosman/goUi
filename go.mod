@@ -51,4 +51,4 @@ replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
 
-replace github.com/cskr/pubsub => ../pubsub
+replace github.com/cskr/pubsub => github.com/bhbosman/pubsub v1.0.3-0.20220802200819-029949e8a8af
