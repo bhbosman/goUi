@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type Service struct {
+type service struct {
 	onConnectionListChange     func(connectionList []IdAndName)
 	onConnectionInstanceChange func(data ConnectionInstanceData)
 	onData                     func() (IConnectionSlideData, error)
@@ -26,21 +26,21 @@ type Service struct {
 	ConnectionManagerHelper    goConnectionManager.IHelper
 	ConnectionManager          goConnectionManager.IService
 	subscribeChannel           *pubsub.NextFuncSubscription
-
-	UniqueReferenceService interfaces.IUniqueReferenceService
-	logger                 *zap.Logger
-	goFunctionCounter      GoFunctionCounter.IService
+	dataInstance               IConnectionSlideData
+	UniqueReferenceService     interfaces.IUniqueReferenceService
+	logger                     *zap.Logger
+	goFunctionCounter          GoFunctionCounter.IService
 }
 
-func (self *Service) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
+func (self *service) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
 	self.onConnectionInstanceChange = cb
 }
 
-func (self *Service) SetConnectionListChange(cb func(connectionList []IdAndName)) {
+func (self *service) SetConnectionListChange(cb func(connectionList []IdAndName)) {
 	self.onConnectionListChange = cb
 }
 
-func NewService(
+func newService(
 	parentContext context.Context,
 	pubSub *pubsub.PubSub,
 	onData func() (IConnectionSlideData, error),
@@ -49,11 +49,11 @@ func NewService(
 	logger *zap.Logger,
 	goFunctionCounter GoFunctionCounter.IService,
 	ConnectionManager goConnectionManager.IService,
-) (*Service, error) {
+) (IConnectionSlideService, error) {
 	ctx, cancelFunc := context.WithCancel(parentContext)
 	channel := make(chan interface{}, 32)
 
-	return &Service{
+	return &service{
 		onData:                  onData,
 		ctx:                     ctx,
 		cancelFunc:              cancelFunc,
@@ -67,7 +67,7 @@ func NewService(
 	}, nil
 }
 
-func (self *Service) Send(message interface{}) error {
+func (self *service) Send(message interface{}) error {
 	send, err := ISendMessage.CallISendMessageSend(
 		self.ctx,
 		self.cmdChannel,
@@ -79,7 +79,7 @@ func (self *Service) Send(message interface{}) error {
 	return send.Args0
 }
 
-func (self *Service) OnStart(ctx context.Context) error {
+func (self *service) OnStart(ctx context.Context) error {
 	err := self.start(ctx)
 	if err != nil {
 		return err
@@ -88,7 +88,7 @@ func (self *Service) OnStart(ctx context.Context) error {
 	return nil
 }
 
-func (self *Service) OnStop(ctx context.Context) error {
+func (self *service) OnStop(ctx context.Context) error {
 	err := self.shutdown(ctx)
 	self.cancelFunc()
 	close(self.cmdChannel)
@@ -96,31 +96,32 @@ func (self *Service) OnStop(ctx context.Context) error {
 	return err
 }
 
-func (self *Service) shutdown(_ context.Context) error {
+func (self *service) shutdown(_ context.Context) error {
 	self.cancelFunc()
 	return pubSub.Unsubscribe("FMD Manager Service", self.pubSub, self.goFunctionCounter, self.subscribeChannel)
 }
 
-func (self *Service) start(_ context.Context) error {
-	dataInstance, err := self.onData()
-	dataInstance.SetConnectionListChange(self.onConnectionListChange)
-	dataInstance.SetConnectionInstanceChange(self.onConnectionInstanceChange)
+func (self *service) start(_ context.Context) error {
+	var err error
+	self.dataInstance, err = self.onData()
+	self.dataInstance.SetConnectionListChange(self.onConnectionListChange)
+	self.dataInstance.SetConnectionInstanceChange(self.onConnectionInstanceChange)
 	if err != nil {
 		return err
 	}
-	go self.goStart(dataInstance)
+	go self.goStart(self.dataInstance)
 	return nil
 }
 
-func (self *Service) State() IFxService.State {
+func (self *service) State() IFxService.State {
 	return self.state
 }
 
-func (self *Service) ServiceName() string {
+func (self *service) ServiceName() string {
 	return "ConnectionSlideService"
 }
 
-func (self *Service) goStart(dataInstance IConnectionSlideData) {
+func (self *service) goStart(dataInstance IConnectionSlideData) {
 	self.subscribeChannel = pubsub.NewNextFuncSubscription(
 		goCommsDefinitions.CreateNextFunc(self.cmdChannel),
 	)

@@ -19,7 +19,7 @@ func (self *data) ShutDown() error {
 	return nil
 }
 
-func NewData() (*data, error) {
+func NewData() (IConnectionSlideData, error) {
 	result := &data{
 		ConnectionDataMap: make(map[string]*ConnectionInstanceData),
 		messageRouter:     messageRouter.NewMessageRouter(),
@@ -49,7 +49,7 @@ func (self *data) handleDisconnectConnection(message *DisconnectConnection) erro
 	return nil
 }
 
-func (self *data) handleDisconnectAllConnections(message *DisconnectAllConnections) error {
+func (self *data) handleDisconnectAllConnections(*DisconnectAllConnections) error {
 	for _, value := range self.ConnectionDataMap {
 		if value.CancelFunc != nil {
 			value.CancelFunc()
@@ -65,7 +65,7 @@ func (self *data) handlePublishInstanceDataFor(message *publishInstanceDataFor) 
 	return nil
 }
 
-func (self *data) handleEmptyQueue(_ *messages.EmptyQueue) {
+func (self *data) handleEmptyQueue(*messages.EmptyQueue) {
 	didSomething := self.connectionListIsDirty
 	if self.connectionListIsDirty {
 		self.DoConnectionListChange()
@@ -82,13 +82,7 @@ func (self *data) handleEmptyQueue(_ *messages.EmptyQueue) {
 
 func (self *data) handleConnectionState(message *model.ConnectionState) {
 	if dataInstance, ok := self.ConnectionDataMap[message.ConnectionId]; ok {
-		dataInstance.isDirty = true
-		dataInstance.CancelContext = message.CancelContext
-		dataInstance.CancelFunc = message.CancelFunc
-		dataInstance.Name = message.Name
-		dataInstance.ConnectionTime = message.ConnectionTime
-		dataInstance.Grid = message.Grid
-		dataInstance.KeyValue = message.KeyValue
+		dataInstance.update(message.Grid, message.KeyValue)
 	}
 }
 
@@ -99,14 +93,17 @@ func (self *data) handleConnectionClosed(message *model.ConnectionClosed) error 
 }
 
 func (self *data) handleConnectionCreated(message *model.ConnectionCreated) error {
-	self.ConnectionDataMap[message.ConnectionId] = &ConnectionInstanceData{
-		isDirty:        true,
-		ConnectionId:   message.ConnectionId,
-		Name:           message.ConnectionName,
-		CancelFunc:     message.CancelFunc,
-		CancelContext:  message.CancelContext,
-		ConnectionTime: message.ConnectionTime,
-	}
+	self.ConnectionDataMap[message.ConnectionId] = NewConnectionInstanceData(
+		message.ConnectionId,
+		true,
+		message.CancelContext,
+		message.CancelFunc,
+		message.ConnectionName,
+		message.ConnectionTime,
+		nil,
+		nil,
+	)
+
 	self.connectionListIsDirty = true
 	return nil
 }

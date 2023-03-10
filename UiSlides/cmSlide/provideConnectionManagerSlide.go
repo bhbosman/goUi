@@ -16,17 +16,19 @@ func ProvideConnectionManagerSlide() fx.Option {
 	return fx.Options(
 		fx.Provide(
 			fx.Annotated{
-				Target: func(params struct {
-					fx.In
-					PubSub                  *pubsub.PubSub  `name:"Application"`
-					ApplicationContext      context.Context `name:"Application"`
-					ConnectionManagerHelper goConnectionManager.IHelper
-					ConnectionManager       goConnectionManager.IService
-					UniqueReferenceService  interfaces.IUniqueReferenceService
-					Logger                  *zap.Logger
-					GoFunctionCounter       GoFunctionCounter.IService
-				}) (*Service, error) {
-					s, e := NewService(
+				Target: func(
+					params struct {
+						fx.In
+						PubSub                  *pubsub.PubSub  `name:"Application"`
+						ApplicationContext      context.Context `name:"Application"`
+						ConnectionManagerHelper goConnectionManager.IHelper
+						ConnectionManager       goConnectionManager.IService
+						UniqueReferenceService  interfaces.IUniqueReferenceService
+						Logger                  *zap.Logger
+						GoFunctionCounter       GoFunctionCounter.IService
+					},
+				) (IConnectionSlideService, error) {
+					s, e := newService(
 						params.ApplicationContext,
 						params.PubSub,
 						func() (IConnectionSlideData, error) {
@@ -45,18 +47,17 @@ func ProvideConnectionManagerSlide() fx.Option {
 				},
 			},
 		),
-
 		fx.Provide(
 			fx.Annotated{
 				Group: "RegisteredMainWindowSlides",
 				Target: func(
 					params struct {
 						fx.In
-						App     *tview.Application
-						Service *Service
+						Lifecycle fx.Lifecycle
+						App       *tview.Application
+						Service   IConnectionSlideService
 					},
 				) (ui.ISlideFactory, error) {
-
 					return newFactory(
 						params.App,
 						params.Service,

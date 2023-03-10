@@ -31,7 +31,7 @@ func (self *CoverSlideFactory) OrderNumber() int {
 	return 1
 }
 
-func (self *CoverSlideFactory) Content(nextSlide func()) (string, ui2.IPrimitiveCloser, error) {
+func (self *CoverSlideFactory) Content() (string, ui2.IPrimitiveCloser, error) {
 	lines := strings.Split(logo, "\n")
 	logoWidth := 0
 	logoHeight := len(lines)
@@ -41,10 +41,8 @@ func (self *CoverSlideFactory) Content(nextSlide func()) (string, ui2.IPrimitive
 		}
 	}
 	logoBox := tview.NewTextView().
-		SetTextColor(tcell.ColorGreen).
-		SetDoneFunc(func(key tcell.Key) {
-			nextSlide()
-		})
+		SetTextColor(tcell.ColorGreen)
+
 	fmt.Fprint(logoBox, logo)
 
 	// Create a frame for the subtitle and navigation infos.

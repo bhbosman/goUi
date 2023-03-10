@@ -15,6 +15,6 @@ type IPrimitiveCloser interface {
 
 type ISlideFactory interface {
 	Title() string
-	Content(nextSlide func()) (string, IPrimitiveCloser, error)
+	Content() (string, IPrimitiveCloser, error)
 	OrderNumber() int
 }

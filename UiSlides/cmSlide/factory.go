@@ -7,7 +7,7 @@ import (
 
 type factory struct {
 	app     *tview.Application
-	service *Service
+	service IConnectionSlideService
 }
 
 func (self *factory) OrderNumber() int {
@@ -18,7 +18,7 @@ func (self *factory) Title() string {
 	return "Connections"
 }
 
-func (self *factory) Content(nextSlide func()) (string, ui.IPrimitiveCloser, error) {
+func (self *factory) Content() (string, ui.IPrimitiveCloser, error) {
 	slide, err := newConnectionSlide(
 		self.app,
 		self.service,
@@ -31,7 +31,7 @@ func (self *factory) Content(nextSlide func()) (string, ui.IPrimitiveCloser, err
 
 func newFactory(
 	app *tview.Application,
-	service *Service,
+	service IConnectionSlideService,
 ) (*factory, error) {
 	return &factory{
 		app:     app,

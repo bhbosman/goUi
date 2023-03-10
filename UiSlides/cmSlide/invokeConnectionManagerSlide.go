@@ -11,7 +11,7 @@ func InvokeConnectionManagerSlide() fx.Option {
 			func(
 				params struct {
 					fx.In
-					Service   *Service
+					Service   IConnectionSlideService
 					Lifecycle fx.Lifecycle
 				}) error {
 				params.Lifecycle.Append(

@@ -226,7 +226,7 @@ func (self *slide) init() {
 
 func newConnectionSlide(
 	app *tview.Application,
-	service *Service,
+	service IConnectionSlideService,
 ) (*slide, error) {
 	result := &slide{
 		service: service,
