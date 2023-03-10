@@ -121,7 +121,9 @@ func (self *Service) ServiceName() string {
 }
 
 func (self *Service) goStart(dataInstance IConnectionSlideData) {
-	self.subscribeChannel = pubsub.NewNextFuncSubscription(goCommsDefinitions.CreateNextFunc(self.cmdChannel))
+	self.subscribeChannel = pubsub.NewNextFuncSubscription(
+		goCommsDefinitions.CreateNextFunc(self.cmdChannel),
+	)
 	self.pubSub.AddSub(self.subscribeChannel, self.ConnectionManagerHelper.PublishChannelName())
 	_ = self.ConnectionManager.Send(
 		&goConnectionManager.RefreshDataTo{
