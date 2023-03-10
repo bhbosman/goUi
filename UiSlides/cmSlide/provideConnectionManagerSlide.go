@@ -12,30 +12,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func InvokeConnectionManagerSlide() fx.Option {
-	return fx.Options(
-		fx.Invoke(
-			func(
-				params struct {
-					fx.In
-					Service   *Service
-					Lifecycle fx.Lifecycle
-				}) error {
-				params.Lifecycle.Append(
-					fx.Hook{
-						OnStart: func(ctx context.Context) error {
-							return params.Service.OnStart(ctx)
-						},
-						OnStop: func(ctx context.Context) error {
-							return params.Service.OnStop(ctx)
-						},
-					})
-				return nil
-			},
-		),
-	)
-}
-
 func ProvideConnectionManagerSlide() fx.Option {
 	return fx.Options(
 		fx.Provide(
@@ -76,16 +52,14 @@ func ProvideConnectionManagerSlide() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						App               *tview.Application
-						Service           *Service
-						ConnectionManager goConnectionManager.IService
+						App     *tview.Application
+						Service *Service
 					},
 				) (ui.ISlideFactory, error) {
 
 					return newFactory(
 						params.App,
 						params.Service,
-						params.ConnectionManager,
 					)
 				},
 			},

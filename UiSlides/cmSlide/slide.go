@@ -2,24 +2,22 @@ package cmSlide
 
 import (
 	"fmt"
-	"github.com/bhbosman/goConnectionManager"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"time"
 )
 
 type slide struct {
-	service           IConnectionSlideService
-	connectionList    *tview.Table
-	table             *tview.Table
-	tableStrings      *tview.Table
-	textView          *tview.TextView
-	actionList        *tview.List
-	next              tview.Primitive
-	app               *tview.Application
-	canDraw           bool
-	connectionPlate   *connectionPlate
-	connectionManager goConnectionManager.IService
+	service         IConnectionSlideService
+	connectionList  *tview.Table
+	table           *tview.Table
+	tableStrings    *tview.Table
+	textView        *tview.TextView
+	actionList      *tview.List
+	next            tview.Primitive
+	app             *tview.Application
+	canDraw         bool
+	connectionPlate *connectionPlate
 }
 
 func (self *slide) Toggle(b bool) {
@@ -229,12 +227,10 @@ func (self *slide) init() {
 func newConnectionSlide(
 	app *tview.Application,
 	service *Service,
-	connectionManager goConnectionManager.IService,
 ) (*slide, error) {
 	result := &slide{
-		service:           service,
-		app:               app,
-		connectionManager: connectionManager,
+		service: service,
+		app:     app,
 	}
 	result.service.SetConnectionListChange(result.SetConnectionListChange)
 	result.service.SetConnectionInstanceChange(result.SetConnectionInstanceChange)
