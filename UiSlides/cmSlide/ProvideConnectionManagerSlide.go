@@ -76,14 +76,16 @@ func ProvideConnectionManagerSlide() fx.Option {
 				Target: func(
 					params struct {
 						fx.In
-						App     *tview.Application
-						Service *Service
+						App               *tview.Application
+						Service           *Service
+						ConnectionManager goConnectionManager.IService
 					},
 				) (ui.ISlideFactory, error) {
 
 					return newFactory(
 						params.App,
 						params.Service,
+						params.ConnectionManager,
 					)
 				},
 			},

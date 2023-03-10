@@ -30,6 +30,8 @@ func NewData() (*data, error) {
 	_ = result.messageRouter.Add(result.handleConnectionClosed)
 	_ = result.messageRouter.Add(result.handlePublishInstanceDataFor)
 	_ = result.messageRouter.Add(result.handleDisconnectConnection)
+	_ = result.messageRouter.Add(result.handleDisconnectAllConnections)
+
 	return result, nil
 }
 
@@ -46,6 +48,16 @@ func (self *data) handleDisconnectConnection(message *DisconnectConnection) erro
 	}
 	return nil
 }
+
+func (self *data) handleDisconnectAllConnections(message *DisconnectAllConnections) error {
+	for _, value := range self.ConnectionDataMap {
+		if value.CancelFunc != nil {
+			value.CancelFunc()
+		}
+	}
+	return nil
+}
+
 func (self *data) handlePublishInstanceDataFor(message *publishInstanceDataFor) error {
 	if info, ok := self.ConnectionDataMap[message.Id]; ok {
 		self.DoConnectionInstanceChange(info)

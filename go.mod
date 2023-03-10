@@ -3,7 +3,7 @@ module github.com/bhbosman/goUi
 go 1.18
 
 require (
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20220801175552-c5aa68065af3
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20230308211643-24fe88b2378e
 	github.com/bhbosman/goConnectionManager v0.0.0-20220721070628-0f4b3c036d93
 	github.com/bhbosman/gocommon v0.0.0-20220718213201-2711fee77ae4
 	github.com/cskr/pubsub v1.0.2
@@ -16,7 +16,7 @@ require (
 
 require (
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf // indirect
-	github.com/cenkalti/backoff/v4 v4.0.0 // indirect
+	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect

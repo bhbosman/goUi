@@ -8,3 +8,10 @@ type DisconnectConnection struct {
 func NewDisconnectConnection(connectionId string, connectionName string) *DisconnectConnection {
 	return &DisconnectConnection{ConnectionId: connectionId, ConnectionName: connectionName}
 }
+
+type DisconnectAllConnections struct {
+}
+
+func NewDisconnectAllConnections() *DisconnectAllConnections {
+	return &DisconnectAllConnections{}
+}
