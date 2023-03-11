@@ -12,6 +12,13 @@ import (
 	"go.uber.org/zap"
 )
 
+type ConnectionManagerSlideResult struct {
+	fx.Out
+	PrimitiveCloserForGroup ui.IPrimitiveCloser `group:"RegisteredMainWindowSlides"`
+	PrimitiveCloserForName  ui.IPrimitiveCloser `name:"ConnectionSlide"`
+	Slide                   *slide
+}
+
 func ProvideConnectionManagerSlide() fx.Option {
 	return fx.Options(
 		fx.Provide(
@@ -49,7 +56,6 @@ func ProvideConnectionManagerSlide() fx.Option {
 		),
 		fx.Provide(
 			fx.Annotated{
-				Group: "RegisteredMainWindowSlides",
 				Target: func(
 					params struct {
 						fx.In
@@ -57,11 +63,20 @@ func ProvideConnectionManagerSlide() fx.Option {
 						App       *tview.Application
 						Service   IConnectionSlideService
 					},
-				) (ui.ISlideFactory, error) {
-					return newFactory(
+				) (ConnectionManagerSlideResult, error) {
+					connectionSlide, err := newConnectionSlide(
+						"Connections",
 						params.App,
 						params.Service,
 					)
+					if err != nil {
+						return ConnectionManagerSlideResult{}, err
+					}
+					return ConnectionManagerSlideResult{
+						PrimitiveCloserForGroup: connectionSlide,
+						PrimitiveCloserForName:  connectionSlide,
+						Slide:                   connectionSlide,
+					}, nil
 				},
 			},
 		),

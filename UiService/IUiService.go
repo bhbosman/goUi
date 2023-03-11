@@ -9,7 +9,7 @@ import (
 )
 
 type IUi interface {
-	Build(*tview.Application, ...ui.ISlideFactory) (ui.IPrimitiveCloser, error)
+	Build2(*tview.Application, ...ui.IPrimitiveCloser) (ui.IPrimitiveCloser, error)
 }
 
 type IUiService interface {

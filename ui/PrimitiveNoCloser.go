@@ -6,7 +6,17 @@ import (
 )
 
 type PrimitiveNoCloser struct {
-	primitive tview.Primitive
+	slideName        string
+	primitive        tview.Primitive
+	slideOrderNumber int
+}
+
+func (self *PrimitiveNoCloser) OrderNumber() int {
+	return self.slideOrderNumber
+}
+
+func (self *PrimitiveNoCloser) Name() string {
+	return self.slideName
 }
 
 func (self *PrimitiveNoCloser) UpdateContent() error {
@@ -45,10 +55,14 @@ func (self *PrimitiveNoCloser) MouseHandler() func(action tview.MouseAction, eve
 	return self.primitive.MouseHandler()
 }
 
-func NewPrimitiveNoCloser(primitive tview.Primitive) *PrimitiveNoCloser {
-	return &PrimitiveNoCloser{primitive: primitive}
-}
-
 func (self *PrimitiveNoCloser) Close() error {
 	return nil
+}
+
+func NewPrimitiveNoCloser(slideOrderNumber int, slideName string, primitive tview.Primitive) IPrimitiveCloser {
+	return &PrimitiveNoCloser{
+		slideOrderNumber: slideOrderNumber,
+		slideName:        slideName,
+		primitive:        primitive,
+	}
 }

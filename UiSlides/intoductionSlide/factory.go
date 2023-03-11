@@ -1,14 +1,5 @@
 package intoductionSlide
 
-import (
-	"fmt"
-	ui2 "github.com/bhbosman/goUi/ui"
-	"github.com/gdamore/tcell/v2"
-	"strings"
-
-	"github.com/rivo/tview"
-)
-
 const logo = `
    __        _
   / /__   __(_)__ _      __
@@ -23,49 +14,3 @@ const (
 	navigation = `Ctrl-N: Next slide    Ctrl-P: Previous slide    Ctrl-C: Exit`
 	mouse      = `(or use your mouse)`
 )
-
-type CoverSlideFactory struct {
-}
-
-func (self *CoverSlideFactory) OrderNumber() int {
-	return 1
-}
-
-func (self *CoverSlideFactory) Content() (string, ui2.IPrimitiveCloser, error) {
-	lines := strings.Split(logo, "\n")
-	logoWidth := 0
-	logoHeight := len(lines)
-	for _, line := range lines {
-		if len(line) > logoWidth {
-			logoWidth = len(line)
-		}
-	}
-	logoBox := tview.NewTextView().
-		SetTextColor(tcell.ColorGreen)
-
-	fmt.Fprint(logoBox, logo)
-
-	// Create a frame for the subtitle and navigation infos.
-	frame := tview.NewFrame(tview.NewBox()).
-		SetBorders(0, 0, 0, 0, 0, 0).
-		AddText(subtitle, true, tview.AlignCenter, tcell.ColorWhite).
-		AddText("", true, tview.AlignCenter, tcell.ColorWhite).
-		AddText(navigation, true, tview.AlignCenter, tcell.ColorDarkMagenta).
-		AddText(mouse, true, tview.AlignCenter, tcell.ColorDarkMagenta)
-
-	// Create a Flex layout that centers the logo and subtitle.
-	flex := tview.NewFlex().
-		SetDirection(tview.FlexRow).
-		AddItem(tview.NewBox(), 0, 7, false).
-		AddItem(tview.NewFlex().
-			AddItem(tview.NewBox(), 0, 1, false).
-			AddItem(logoBox, logoWidth, 1, true).
-			AddItem(tview.NewBox(), 0, 1, false), logoHeight, 1, true).
-		AddItem(frame, 0, 10, false)
-
-	return self.Title(), ui2.NewPrimitiveNoCloser(flex), nil
-}
-
-func (self *CoverSlideFactory) Title() string {
-	return "Cover"
-}

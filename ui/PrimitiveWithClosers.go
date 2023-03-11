@@ -7,8 +7,18 @@ import (
 )
 
 type PrimitiveWithCloser struct {
-	primitive tview.Primitive
-	closers   []IPrimitiveCloser
+	slideOrderNumber int
+	slideName        string
+	primitive        tview.Primitive
+	closers          []IPrimitiveCloser
+}
+
+func (self *PrimitiveWithCloser) OrderNumber() int {
+	return self.slideOrderNumber
+}
+
+func (self *PrimitiveWithCloser) Name() string {
+	return self.slideName
 }
 
 func (self *PrimitiveWithCloser) UpdateContent() error {
@@ -27,7 +37,7 @@ func (self *PrimitiveWithCloser) GetRect() (int, int, int, int) {
 	return self.primitive.GetRect()
 }
 
-func (self PrimitiveWithCloser) SetRect(x, y, width, height int) {
+func (self *PrimitiveWithCloser) SetRect(x, y, width, height int) {
 	self.primitive.SetRect(x, y, width, height)
 }
 
@@ -60,9 +70,16 @@ func (self *PrimitiveWithCloser) Close() error {
 	return err
 }
 
-func NewPrimitiveWithCloser(primitive tview.Primitive, closers []IPrimitiveCloser) *PrimitiveWithCloser {
+func NewPrimitiveWithCloser(
+	slideOrderNumber int,
+	slideName string,
+	primitive tview.Primitive,
+	closers []IPrimitiveCloser,
+) IPrimitiveCloser {
 	return &PrimitiveWithCloser{
-		primitive: primitive,
-		closers:   closers,
+		slideOrderNumber: slideOrderNumber,
+		slideName:        slideName,
+		primitive:        primitive,
+		closers:          closers,
 	}
 }

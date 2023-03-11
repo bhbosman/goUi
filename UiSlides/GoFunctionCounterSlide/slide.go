@@ -6,11 +6,21 @@ import (
 )
 
 type slide struct {
-	app     *tview.Application
-	table   *tview.Table
-	plate   *tablePlate
-	canDraw bool
-	names   []string
+	slideOrderNumber int
+	slideName        string
+	app              *tview.Application
+	table            *tview.Table
+	plate            *tablePlate
+	canDraw          bool
+	names            []string
+}
+
+func (self *slide) OrderNumber() int {
+	return self.slideOrderNumber
+}
+
+func (self *slide) Name() string {
+	return self.slideName
 }
 
 func (self *slide) Toggle(b bool) {
@@ -88,8 +98,10 @@ func (self *slide) SetConnectionListChange(names []string) {
 	}
 }
 
-func newSlide(app *tview.Application) *slide {
+func newSlide(slideOrderNumber int, slideName string, app *tview.Application) *slide {
 	return &slide{
-		app: app,
+		slideOrderNumber: slideOrderNumber,
+		app:              app,
+		slideName:        slideName,
 	}
 }

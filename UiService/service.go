@@ -37,23 +37,23 @@ func (self *Service) OnStop(_ context.Context) error {
 	return nil
 }
 
-func (self *Service) Build(
-	app *tview.Application,
-	registeredSlides ...ui.ISlideFactory,
+func (self *Service) Build2(
+	application *tview.Application,
+	primitiveCloser ...ui.IPrimitiveCloser,
 ) (ui.IPrimitiveCloser, error) {
-	return self.BuildApp(app, registeredSlides...)
+	return self.BuildApp2(application, primitiveCloser...)
 }
-
-func (self *Service) BuildApp(
+func (self *Service) BuildApp2(
 	app *tview.Application,
-	slideFactories ...ui.ISlideFactory,
+	slideFactories ...ui.IPrimitiveCloser,
 ) (ui.IPrimitiveCloser, error) {
+
 	m := make(map[string]bool)
 	for _, slide := range slideFactories {
-		if _, ok := m[slide.Title()]; ok {
-			return nil, fmt.Errorf("multiple slideFactories with name %v", slide.Title())
+		if _, ok := m[slide.Name()]; ok {
+			return nil, fmt.Errorf("multiple slideFactories with name %v", slide.Name())
 		}
-		m[slide.Title()] = true
+		m[slide.Name()] = true
 	}
 
 	sort.Slice(
@@ -69,8 +69,10 @@ func (self *Service) BuildApp(
 			if !b {
 				return true
 			}
-			return strings.Compare(slideFactories[i].Title(), slideFactories[j].Title()) == -1
-		})
+			return strings.Compare(slideFactories[i].Name(), slideFactories[j].Name()) == -1
+		},
+	)
+
 	pages := tview.NewPages()
 	info := tview.NewTextView().
 		SetDynamicColors(true).
@@ -95,7 +97,8 @@ func (self *Service) BuildApp(
 
 	var closers []ui.IPrimitiveCloser
 	for index, slide := range slideFactories {
-		title, primitive, _ := slide.Content()
+		title := slide.Name()
+		primitive := slide
 		closers = append(closers, primitive)
 		pages.AddPage(strconv.Itoa(index), primitive, true, index == 0)
 		_, _ = fmt.Fprintf(info, `%d ["%d"][green]%s[white][""]  `, index+1, index, title)
@@ -126,10 +129,10 @@ func (self *Service) BuildApp(
 	page, item := pages.GetFrontPage()
 	s.SetCurrent(page, item)
 
-	return ui.NewPrimitiveWithCloser(layout, closers), nil
+	return ui.NewPrimitiveWithCloser(-1, "MainWithClosers", layout, closers), nil
 }
 
-func NewService(pubSub *pubsub.PubSub) *Service {
+func NewService(pubSub *pubsub.PubSub) IUiService {
 	result := &Service{
 		pubSub: pubSub,
 	}

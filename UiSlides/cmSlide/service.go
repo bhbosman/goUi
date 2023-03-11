@@ -15,29 +15,27 @@ import (
 )
 
 type service struct {
-	onConnectionListChange     func(connectionList []IdAndName)
-	onConnectionInstanceChange func(data ConnectionInstanceData)
-	onData                     func() (IConnectionSlideData, error)
-	state                      IFxService.State
-	ctx                        context.Context
-	cancelFunc                 context.CancelFunc
-	cmdChannel                 chan interface{}
-	pubSub                     *pubsub.PubSub
-	ConnectionManagerHelper    goConnectionManager.IHelper
-	ConnectionManager          goConnectionManager.IService
-	subscribeChannel           *pubsub.NextFuncSubscription
-	dataInstance               IConnectionSlideData
-	UniqueReferenceService     interfaces.IUniqueReferenceService
-	logger                     *zap.Logger
-	goFunctionCounter          GoFunctionCounter.IService
+	onData                  func() (IConnectionSlideData, error)
+	state                   IFxService.State
+	ctx                     context.Context
+	cancelFunc              context.CancelFunc
+	cmdChannel              chan interface{}
+	pubSub                  *pubsub.PubSub
+	ConnectionManagerHelper goConnectionManager.IHelper
+	ConnectionManager       goConnectionManager.IService
+	subscribeChannel        *pubsub.NextFuncSubscription
+	dataInstance            IConnectionSlideData
+	UniqueReferenceService  interfaces.IUniqueReferenceService
+	logger                  *zap.Logger
+	goFunctionCounter       GoFunctionCounter.IService
 }
 
 func (self *service) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
-	self.onConnectionInstanceChange = cb
+	_, _ = CallIConnectionSlideSetConnectionInstanceChange(self.ctx, self.cmdChannel, false, cb)
 }
 
 func (self *service) SetConnectionListChange(cb func(connectionList []IdAndName)) {
-	self.onConnectionListChange = cb
+	_, _ = CallIConnectionSlideSetConnectionListChange(self.ctx, self.cmdChannel, false, cb)
 }
 
 func newService(
@@ -104,8 +102,6 @@ func (self *service) shutdown(_ context.Context) error {
 func (self *service) start(_ context.Context) error {
 	var err error
 	self.dataInstance, err = self.onData()
-	self.dataInstance.SetConnectionListChange(self.onConnectionListChange)
-	self.dataInstance.SetConnectionInstanceChange(self.onConnectionInstanceChange)
 	if err != nil {
 		return err
 	}

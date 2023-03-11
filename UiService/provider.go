@@ -29,10 +29,10 @@ func ProvideTerminalApplication() fx.Option {
 						fx.In
 						UiApp                      IUiService
 						App                        *tview.Application
-						RegisteredMainWindowSlides []ui.ISlideFactory `group:"RegisteredMainWindowSlides"`
+						RegisteredMainWindowSlides []ui.IPrimitiveCloser `group:"RegisteredMainWindowSlides"`
 					},
 				) (ui.IPrimitiveCloser, error) {
-					return params.UiApp.Build(params.App, params.RegisteredMainWindowSlides...)
+					return params.UiApp.Build2(params.App, params.RegisteredMainWindowSlides...)
 				},
 			},
 		),

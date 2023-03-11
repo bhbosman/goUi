@@ -17,11 +17,16 @@ func Provide() fx.Option {
 					App     *tview.Application
 					Service GoFunctionCounter.IService
 				},
-			) (ui2.ISlideFactory, error) {
-				return newGoFunctionSideFactory(
+			) (ui2.IPrimitiveCloser, error) {
+				primitive := newSlide(
+					2,
+					"Go Function Counter",
 					params.App,
-					params.Service,
-				), nil
+				)
+				primitive.init()
+				params.Service.SetConnectionListChange(primitive.SetConnectionListChange)
+
+				return primitive, nil
 			},
 		},
 	)

@@ -8,16 +8,26 @@ import (
 )
 
 type slide struct {
-	service         IConnectionSlideService
-	connectionList  *tview.Table
-	table           *tview.Table
-	tableStrings    *tview.Table
-	textView        *tview.TextView
-	actionList      *tview.List
-	next            tview.Primitive
-	app             *tview.Application
-	canDraw         bool
-	connectionPlate *connectionPlate
+	service          IConnectionSlideService
+	connectionList   *tview.Table
+	table            *tview.Table
+	tableStrings     *tview.Table
+	textView         *tview.TextView
+	actionList       *tview.List
+	next             tview.Primitive
+	app              *tview.Application
+	canDraw          bool
+	connectionPlate  *connectionPlate
+	slideName        string
+	slideOrderNumber int
+}
+
+func (self *slide) OrderNumber() int {
+	return self.slideOrderNumber
+}
+
+func (self *slide) Name() string {
+	return self.slideName
 }
 
 func (self *slide) Toggle(b bool) {
@@ -225,15 +235,15 @@ func (self *slide) init() {
 }
 
 func newConnectionSlide(
+	slideName string,
 	app *tview.Application,
 	service IConnectionSlideService,
 ) (*slide, error) {
 	result := &slide{
-		service: service,
-		app:     app,
+		slideName: slideName,
+		service:   service,
+		app:       app,
 	}
-	result.service.SetConnectionListChange(result.SetConnectionListChange)
-	result.service.SetConnectionInstanceChange(result.SetConnectionInstanceChange)
 	result.init()
 	return result, nil
 }
