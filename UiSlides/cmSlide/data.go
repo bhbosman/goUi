@@ -13,6 +13,11 @@ type data struct {
 	messageRouter              *messageRouter.MessageRouter
 	onConnectionListChange     func(connectionList []IdAndName)
 	onConnectionInstanceChange func(data ConnectionInstanceData)
+	onSendMessageToService     func(interface{})
+}
+
+func (self *data) SendMessageToService(cb func(interface{})) {
+	self.onSendMessageToService = cb
 }
 
 func (self *data) ShutDown() error {

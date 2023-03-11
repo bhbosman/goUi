@@ -137,6 +137,13 @@ func (self *service) goStart(dataInstance IConnectionSlideData) {
 		[]ChannelHandler.ChannelHandler{
 			{
 				Cb: func(next interface{}, message interface{}) (bool, error) {
+					rr, e := ChannelEventsForIConnectionSlide(next.(IConnectionSlide), message)
+					return rr, e
+				},
+			},
+
+			{
+				Cb: func(next interface{}, message interface{}) (bool, error) {
 					rr, e := ISendMessage.ChannelEventsForISendMessage(next.(ISendMessage.ISendMessage), message)
 					return rr, e
 				},
