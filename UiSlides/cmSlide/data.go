@@ -17,9 +17,20 @@ type data struct {
 }
 
 func (self *data) ResetConnectionParams(connectionId string) {
+	if info, ok := self.ConnectionDataMap[connectionId]; ok {
+		if info.CancelFunc != nil {
+			info.ResetConnectionParams()
+		}
+	}
+
 }
 
 func (self *data) ResetAllConnectionParams() {
+	for _, value := range self.ConnectionDataMap {
+		if value.CancelFunc != nil {
+			value.ResetConnectionParams()
+		}
+	}
 }
 
 func (self *data) DisconnectConnection(connectionId string) {
@@ -112,8 +123,8 @@ func (self *data) handleConnectionCreated(message *model.ConnectionCreated) erro
 		message.CancelFunc,
 		message.ConnectionName,
 		message.ConnectionTime,
-		nil,
-		nil,
+		message.NextFuncOutBoundChannel,
+		message.NextFuncInBoundChannel,
 	)
 
 	self.connectionListIsDirty = true

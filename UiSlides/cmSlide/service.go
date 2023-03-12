@@ -31,9 +31,11 @@ type service struct {
 }
 
 func (self *service) ResetConnectionParams(connectionId string) {
+	_, _ = CallIConnectionSlideResetConnectionParams(self.ctx, self.cmdChannel, false, connectionId)
 }
 
 func (self *service) ResetAllConnectionParams() {
+	_, _ = CallIConnectionSlideResetAllConnectionParams(self.ctx, self.cmdChannel, false)
 }
 
 func (self *service) DisconnectAllConnections() {

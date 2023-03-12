@@ -183,16 +183,19 @@ func (self *slide) init() {
 	)
 	self.actionList.AddItem("Reset Counters", "", 0,
 		func() {
-			//_ = self.service.Send(NewDisconnectAllConnections())
-			//self.actionList.SetCurrentItem(0)
-			//self.app.SetFocus(self.connectionList)
+			row, _ := self.connectionList.GetSelection()
+			if item, ok := self.connectionPlate.GetItem(row); ok {
+				self.service.ResetConnectionParams(item.Id)
+			}
+			self.actionList.SetCurrentItem(0)
+			self.app.SetFocus(self.connectionList)
 		},
 	)
 	self.actionList.AddItem("Reset All Counters", "", 0,
 		func() {
-			//_ = self.service.Send(NewDisconnectAllConnections())
-			//self.actionList.SetCurrentItem(0)
-			//self.app.SetFocus(self.connectionList)
+			self.service.ResetAllConnectionParams()
+			self.actionList.SetCurrentItem(0)
+			self.app.SetFocus(self.connectionList)
 		},
 	)
 
