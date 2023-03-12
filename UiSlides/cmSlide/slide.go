@@ -168,12 +168,7 @@ func (self *slide) init() {
 		func() {
 			row, _ := self.connectionList.GetSelection()
 			if item, ok := self.connectionPlate.GetItem(row); ok {
-				_ = self.service.Send(
-					NewDisconnectConnection(
-						item.Id,
-						item.Name,
-					),
-				)
+				self.service.DisconnectConnection(item.Id)
 			}
 			self.actionList.SetCurrentItem(0)
 			self.app.SetFocus(self.connectionList)
@@ -181,7 +176,7 @@ func (self *slide) init() {
 	)
 	self.actionList.AddItem("Disconnect All", "", 0,
 		func() {
-			_ = self.service.Send(NewDisconnectAllConnections())
+			self.service.DisconnectAllConnections()
 			self.actionList.SetCurrentItem(0)
 			self.app.SetFocus(self.connectionList)
 		},

@@ -16,6 +16,33 @@ type data struct {
 	onSendMessageToService     func(interface{})
 }
 
+func (self *data) ResetConnectionParams(connectionId string) {
+}
+
+func (self *data) ResetAllConnectionParams() {
+}
+
+func (self *data) DisconnectConnection(connectionId string) {
+	if info, ok := self.ConnectionDataMap[connectionId]; ok {
+		if info.CancelFunc != nil {
+			info.CancelFunc()
+		}
+	}
+}
+
+func (self *data) DisconnectAllConnections() {
+	for _, value := range self.ConnectionDataMap {
+		if value.CancelFunc != nil {
+			value.CancelFunc()
+		}
+	}
+
+	// TODO: something to think about
+	// At this point I can kill the current ConnectionDataMap. May be do this ??
+	//self.ConnectionDataMap = make(map[string]*ConnectionInstanceData)
+	//self.connectionListIsDirty = true
+}
+
 func (self *data) SendMessageToService(cb func(interface{})) {
 	self.onSendMessageToService = cb
 }
@@ -34,32 +61,12 @@ func NewData() (IConnectionSlideData, error) {
 	_ = result.messageRouter.Add(result.handleConnectionCreated)
 	_ = result.messageRouter.Add(result.handleConnectionClosed)
 	_ = result.messageRouter.Add(result.handlePublishInstanceDataFor)
-	_ = result.messageRouter.Add(result.handleDisconnectConnection)
-	_ = result.messageRouter.Add(result.handleDisconnectAllConnections)
 
 	return result, nil
 }
 
 func (self *data) Send(data interface{}) error {
 	self.messageRouter.Route(data)
-	return nil
-}
-
-func (self *data) handleDisconnectConnection(message *DisconnectConnection) error {
-	if info, ok := self.ConnectionDataMap[message.ConnectionId]; ok {
-		if info.CancelFunc != nil {
-			info.CancelFunc()
-		}
-	}
-	return nil
-}
-
-func (self *data) handleDisconnectAllConnections(*DisconnectAllConnections) error {
-	for _, value := range self.ConnectionDataMap {
-		if value.CancelFunc != nil {
-			value.CancelFunc()
-		}
-	}
 	return nil
 }
 

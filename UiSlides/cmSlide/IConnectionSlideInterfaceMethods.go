@@ -14,6 +14,360 @@ import (
 // Interface A Comment
 // Interface github.com/bhbosman/goUi/UiSlides/cmSlide
 // Interface IConnectionSlide
+// Interface IConnectionSlide, Method: DisconnectAllConnections
+type IConnectionSlideDisconnectAllConnectionsIn struct {
+}
+
+type IConnectionSlideDisconnectAllConnectionsOut struct {
+}
+type IConnectionSlideDisconnectAllConnectionsError struct {
+	InterfaceName string
+	MethodName    string
+	Reason        string
+}
+
+func (self *IConnectionSlideDisconnectAllConnectionsError) Error() string {
+	return fmt.Sprintf("error in data coming back from %v::%v. Reason: %v", self.InterfaceName, self.MethodName, self.Reason)
+}
+
+type IConnectionSlideDisconnectAllConnections struct {
+	inData         IConnectionSlideDisconnectAllConnectionsIn
+	outDataChannel chan IConnectionSlideDisconnectAllConnectionsOut
+}
+
+func NewIConnectionSlideDisconnectAllConnections(waitToComplete bool) *IConnectionSlideDisconnectAllConnections {
+	var outDataChannel chan IConnectionSlideDisconnectAllConnectionsOut
+	if waitToComplete {
+		outDataChannel = make(chan IConnectionSlideDisconnectAllConnectionsOut)
+	} else {
+		outDataChannel = nil
+	}
+	return &IConnectionSlideDisconnectAllConnections{
+		inData:         IConnectionSlideDisconnectAllConnectionsIn{},
+		outDataChannel: outDataChannel,
+	}
+}
+
+func (self *IConnectionSlideDisconnectAllConnections) Wait(onError func(interfaceName string, methodName string, err error) error) (IConnectionSlideDisconnectAllConnectionsOut, error) {
+	data, ok := <-self.outDataChannel
+	if !ok {
+		generatedError := &IConnectionSlideDisconnectAllConnectionsError{
+			InterfaceName: "IConnectionSlide",
+			MethodName:    "DisconnectAllConnections",
+			Reason:        "Channel for IConnectionSlide::DisconnectAllConnections returned false",
+		}
+		if onError != nil {
+			err := onError("IConnectionSlide", "DisconnectAllConnections", generatedError)
+			return IConnectionSlideDisconnectAllConnectionsOut{}, err
+		} else {
+			return IConnectionSlideDisconnectAllConnectionsOut{}, generatedError
+		}
+	}
+	return data, nil
+}
+
+func (self *IConnectionSlideDisconnectAllConnections) Close() error {
+	close(self.outDataChannel)
+	return nil
+}
+func CallIConnectionSlideDisconnectAllConnections(context context.Context, channel chan<- interface{}, waitToComplete bool) (IConnectionSlideDisconnectAllConnectionsOut, error) {
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideDisconnectAllConnectionsOut{}, context.Err()
+	}
+	data := NewIConnectionSlideDisconnectAllConnections(waitToComplete)
+	if waitToComplete {
+		defer func(data *IConnectionSlideDisconnectAllConnections) {
+			err := data.Close()
+			if err != nil {
+			}
+		}(data)
+	}
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideDisconnectAllConnectionsOut{}, context.Err()
+	}
+	channel <- data
+	var err error
+	var v IConnectionSlideDisconnectAllConnectionsOut
+	if waitToComplete {
+		v, err = data.Wait(func(interfaceName string, methodName string, err error) error {
+			return err
+		})
+	} else {
+		err = errors.NoWaitOperationError
+	}
+	if err != nil {
+		return IConnectionSlideDisconnectAllConnectionsOut{}, err
+	}
+	return v, nil
+}
+
+// Interface IConnectionSlide, Method: DisconnectConnection
+type IConnectionSlideDisconnectConnectionIn struct {
+	arg0 string
+}
+
+type IConnectionSlideDisconnectConnectionOut struct {
+}
+type IConnectionSlideDisconnectConnectionError struct {
+	InterfaceName string
+	MethodName    string
+	Reason        string
+}
+
+func (self *IConnectionSlideDisconnectConnectionError) Error() string {
+	return fmt.Sprintf("error in data coming back from %v::%v. Reason: %v", self.InterfaceName, self.MethodName, self.Reason)
+}
+
+type IConnectionSlideDisconnectConnection struct {
+	inData         IConnectionSlideDisconnectConnectionIn
+	outDataChannel chan IConnectionSlideDisconnectConnectionOut
+}
+
+func NewIConnectionSlideDisconnectConnection(waitToComplete bool, arg0 string) *IConnectionSlideDisconnectConnection {
+	var outDataChannel chan IConnectionSlideDisconnectConnectionOut
+	if waitToComplete {
+		outDataChannel = make(chan IConnectionSlideDisconnectConnectionOut)
+	} else {
+		outDataChannel = nil
+	}
+	return &IConnectionSlideDisconnectConnection{
+		inData: IConnectionSlideDisconnectConnectionIn{
+			arg0: arg0,
+		},
+		outDataChannel: outDataChannel,
+	}
+}
+
+func (self *IConnectionSlideDisconnectConnection) Wait(onError func(interfaceName string, methodName string, err error) error) (IConnectionSlideDisconnectConnectionOut, error) {
+	data, ok := <-self.outDataChannel
+	if !ok {
+		generatedError := &IConnectionSlideDisconnectConnectionError{
+			InterfaceName: "IConnectionSlide",
+			MethodName:    "DisconnectConnection",
+			Reason:        "Channel for IConnectionSlide::DisconnectConnection returned false",
+		}
+		if onError != nil {
+			err := onError("IConnectionSlide", "DisconnectConnection", generatedError)
+			return IConnectionSlideDisconnectConnectionOut{}, err
+		} else {
+			return IConnectionSlideDisconnectConnectionOut{}, generatedError
+		}
+	}
+	return data, nil
+}
+
+func (self *IConnectionSlideDisconnectConnection) Close() error {
+	close(self.outDataChannel)
+	return nil
+}
+func CallIConnectionSlideDisconnectConnection(context context.Context, channel chan<- interface{}, waitToComplete bool, arg0 string) (IConnectionSlideDisconnectConnectionOut, error) {
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideDisconnectConnectionOut{}, context.Err()
+	}
+	data := NewIConnectionSlideDisconnectConnection(waitToComplete, arg0)
+	if waitToComplete {
+		defer func(data *IConnectionSlideDisconnectConnection) {
+			err := data.Close()
+			if err != nil {
+			}
+		}(data)
+	}
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideDisconnectConnectionOut{}, context.Err()
+	}
+	channel <- data
+	var err error
+	var v IConnectionSlideDisconnectConnectionOut
+	if waitToComplete {
+		v, err = data.Wait(func(interfaceName string, methodName string, err error) error {
+			return err
+		})
+	} else {
+		err = errors.NoWaitOperationError
+	}
+	if err != nil {
+		return IConnectionSlideDisconnectConnectionOut{}, err
+	}
+	return v, nil
+}
+
+// Interface IConnectionSlide, Method: ResetAllConnectionParams
+type IConnectionSlideResetAllConnectionParamsIn struct {
+}
+
+type IConnectionSlideResetAllConnectionParamsOut struct {
+}
+type IConnectionSlideResetAllConnectionParamsError struct {
+	InterfaceName string
+	MethodName    string
+	Reason        string
+}
+
+func (self *IConnectionSlideResetAllConnectionParamsError) Error() string {
+	return fmt.Sprintf("error in data coming back from %v::%v. Reason: %v", self.InterfaceName, self.MethodName, self.Reason)
+}
+
+type IConnectionSlideResetAllConnectionParams struct {
+	inData         IConnectionSlideResetAllConnectionParamsIn
+	outDataChannel chan IConnectionSlideResetAllConnectionParamsOut
+}
+
+func NewIConnectionSlideResetAllConnectionParams(waitToComplete bool) *IConnectionSlideResetAllConnectionParams {
+	var outDataChannel chan IConnectionSlideResetAllConnectionParamsOut
+	if waitToComplete {
+		outDataChannel = make(chan IConnectionSlideResetAllConnectionParamsOut)
+	} else {
+		outDataChannel = nil
+	}
+	return &IConnectionSlideResetAllConnectionParams{
+		inData:         IConnectionSlideResetAllConnectionParamsIn{},
+		outDataChannel: outDataChannel,
+	}
+}
+
+func (self *IConnectionSlideResetAllConnectionParams) Wait(onError func(interfaceName string, methodName string, err error) error) (IConnectionSlideResetAllConnectionParamsOut, error) {
+	data, ok := <-self.outDataChannel
+	if !ok {
+		generatedError := &IConnectionSlideResetAllConnectionParamsError{
+			InterfaceName: "IConnectionSlide",
+			MethodName:    "ResetAllConnectionParams",
+			Reason:        "Channel for IConnectionSlide::ResetAllConnectionParams returned false",
+		}
+		if onError != nil {
+			err := onError("IConnectionSlide", "ResetAllConnectionParams", generatedError)
+			return IConnectionSlideResetAllConnectionParamsOut{}, err
+		} else {
+			return IConnectionSlideResetAllConnectionParamsOut{}, generatedError
+		}
+	}
+	return data, nil
+}
+
+func (self *IConnectionSlideResetAllConnectionParams) Close() error {
+	close(self.outDataChannel)
+	return nil
+}
+func CallIConnectionSlideResetAllConnectionParams(context context.Context, channel chan<- interface{}, waitToComplete bool) (IConnectionSlideResetAllConnectionParamsOut, error) {
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideResetAllConnectionParamsOut{}, context.Err()
+	}
+	data := NewIConnectionSlideResetAllConnectionParams(waitToComplete)
+	if waitToComplete {
+		defer func(data *IConnectionSlideResetAllConnectionParams) {
+			err := data.Close()
+			if err != nil {
+			}
+		}(data)
+	}
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideResetAllConnectionParamsOut{}, context.Err()
+	}
+	channel <- data
+	var err error
+	var v IConnectionSlideResetAllConnectionParamsOut
+	if waitToComplete {
+		v, err = data.Wait(func(interfaceName string, methodName string, err error) error {
+			return err
+		})
+	} else {
+		err = errors.NoWaitOperationError
+	}
+	if err != nil {
+		return IConnectionSlideResetAllConnectionParamsOut{}, err
+	}
+	return v, nil
+}
+
+// Interface IConnectionSlide, Method: ResetConnectionParams
+type IConnectionSlideResetConnectionParamsIn struct {
+	arg0 string
+}
+
+type IConnectionSlideResetConnectionParamsOut struct {
+}
+type IConnectionSlideResetConnectionParamsError struct {
+	InterfaceName string
+	MethodName    string
+	Reason        string
+}
+
+func (self *IConnectionSlideResetConnectionParamsError) Error() string {
+	return fmt.Sprintf("error in data coming back from %v::%v. Reason: %v", self.InterfaceName, self.MethodName, self.Reason)
+}
+
+type IConnectionSlideResetConnectionParams struct {
+	inData         IConnectionSlideResetConnectionParamsIn
+	outDataChannel chan IConnectionSlideResetConnectionParamsOut
+}
+
+func NewIConnectionSlideResetConnectionParams(waitToComplete bool, arg0 string) *IConnectionSlideResetConnectionParams {
+	var outDataChannel chan IConnectionSlideResetConnectionParamsOut
+	if waitToComplete {
+		outDataChannel = make(chan IConnectionSlideResetConnectionParamsOut)
+	} else {
+		outDataChannel = nil
+	}
+	return &IConnectionSlideResetConnectionParams{
+		inData: IConnectionSlideResetConnectionParamsIn{
+			arg0: arg0,
+		},
+		outDataChannel: outDataChannel,
+	}
+}
+
+func (self *IConnectionSlideResetConnectionParams) Wait(onError func(interfaceName string, methodName string, err error) error) (IConnectionSlideResetConnectionParamsOut, error) {
+	data, ok := <-self.outDataChannel
+	if !ok {
+		generatedError := &IConnectionSlideResetConnectionParamsError{
+			InterfaceName: "IConnectionSlide",
+			MethodName:    "ResetConnectionParams",
+			Reason:        "Channel for IConnectionSlide::ResetConnectionParams returned false",
+		}
+		if onError != nil {
+			err := onError("IConnectionSlide", "ResetConnectionParams", generatedError)
+			return IConnectionSlideResetConnectionParamsOut{}, err
+		} else {
+			return IConnectionSlideResetConnectionParamsOut{}, generatedError
+		}
+	}
+	return data, nil
+}
+
+func (self *IConnectionSlideResetConnectionParams) Close() error {
+	close(self.outDataChannel)
+	return nil
+}
+func CallIConnectionSlideResetConnectionParams(context context.Context, channel chan<- interface{}, waitToComplete bool, arg0 string) (IConnectionSlideResetConnectionParamsOut, error) {
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideResetConnectionParamsOut{}, context.Err()
+	}
+	data := NewIConnectionSlideResetConnectionParams(waitToComplete, arg0)
+	if waitToComplete {
+		defer func(data *IConnectionSlideResetConnectionParams) {
+			err := data.Close()
+			if err != nil {
+			}
+		}(data)
+	}
+	if context != nil && context.Err() != nil {
+		return IConnectionSlideResetConnectionParamsOut{}, context.Err()
+	}
+	channel <- data
+	var err error
+	var v IConnectionSlideResetConnectionParamsOut
+	if waitToComplete {
+		v, err = data.Wait(func(interfaceName string, methodName string, err error) error {
+			return err
+		})
+	} else {
+		err = errors.NoWaitOperationError
+	}
+	if err != nil {
+		return IConnectionSlideResetConnectionParamsOut{}, err
+	}
+	return v, nil
+}
+
 // Interface IConnectionSlide, Method: Send
 type IConnectionSlideSendIn struct {
 	arg0 interface{}
@@ -287,6 +641,34 @@ func CallIConnectionSlideSetConnectionListChange(context context.Context, channe
 
 func ChannelEventsForIConnectionSlide(next IConnectionSlide, event interface{}) (bool, error) {
 	switch v := event.(type) {
+	case *IConnectionSlideDisconnectAllConnections:
+		data := IConnectionSlideDisconnectAllConnectionsOut{}
+		next.DisconnectAllConnections()
+		if v.outDataChannel != nil {
+			v.outDataChannel <- data
+		}
+		return true, nil
+	case *IConnectionSlideDisconnectConnection:
+		data := IConnectionSlideDisconnectConnectionOut{}
+		next.DisconnectConnection(v.inData.arg0)
+		if v.outDataChannel != nil {
+			v.outDataChannel <- data
+		}
+		return true, nil
+	case *IConnectionSlideResetAllConnectionParams:
+		data := IConnectionSlideResetAllConnectionParamsOut{}
+		next.ResetAllConnectionParams()
+		if v.outDataChannel != nil {
+			v.outDataChannel <- data
+		}
+		return true, nil
+	case *IConnectionSlideResetConnectionParams:
+		data := IConnectionSlideResetConnectionParamsOut{}
+		next.ResetConnectionParams(v.inData.arg0)
+		if v.outDataChannel != nil {
+			v.outDataChannel <- data
+		}
+		return true, nil
 	case *IConnectionSlideSend:
 		data := IConnectionSlideSendOut{}
 		data.Args0 = next.Send(v.inData.arg0)

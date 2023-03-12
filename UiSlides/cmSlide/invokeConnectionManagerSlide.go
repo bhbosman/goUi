@@ -14,7 +14,8 @@ func InvokeConnectionManagerSlide() fx.Option {
 					Service   IConnectionSlideService
 					Lifecycle fx.Lifecycle
 					Slide     *slide
-				}) error {
+				},
+			) error {
 				params.Lifecycle.Append(
 					fx.Hook{
 						OnStart: func(ctx context.Context) error {
@@ -30,7 +31,8 @@ func InvokeConnectionManagerSlide() fx.Option {
 						OnStop: func(ctx context.Context) error {
 							return params.Service.OnStop(ctx)
 						},
-					})
+					},
+				)
 				return nil
 			},
 		),

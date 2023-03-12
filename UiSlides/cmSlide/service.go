@@ -30,6 +30,20 @@ type service struct {
 	goFunctionCounter       GoFunctionCounter.IService
 }
 
+func (self *service) ResetConnectionParams(connectionId string) {
+}
+
+func (self *service) ResetAllConnectionParams() {
+}
+
+func (self *service) DisconnectAllConnections() {
+	_, _ = CallIConnectionSlideDisconnectAllConnections(self.ctx, self.cmdChannel, false)
+}
+
+func (self *service) DisconnectConnection(connectionId string) {
+	_, _ = CallIConnectionSlideDisconnectConnection(self.ctx, self.cmdChannel, false, connectionId)
+}
+
 func (self *service) SetConnectionInstanceChange(cb func(data ConnectionInstanceData)) {
 	_, _ = CallIConnectionSlideSetConnectionInstanceChange(self.ctx, self.cmdChannel, false, cb)
 }
