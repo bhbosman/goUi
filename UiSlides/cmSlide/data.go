@@ -10,7 +10,7 @@ import (
 type data struct {
 	connectionListIsDirty      bool
 	ConnectionDataMap          map[string]*ConnectionInstanceData
-	messageRouter              *messageRouter.MessageRouter
+	messageRouter              messageRouter.IMessageRouter
 	onConnectionListChange     func(connectionList []IdAndName)
 	onConnectionInstanceChange func(data ConnectionInstanceData)
 	onSendMessageToService     func(interface{})
