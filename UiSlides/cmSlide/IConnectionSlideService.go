@@ -1,7 +1,7 @@
 package cmSlide
 
 import (
-	"github.com/bhbosman/gocommon/Services/IFxService"
+	"github.com/bhbosman/gocommon/services/IFxService"
 )
 
 type IConnectionSlideService interface {
