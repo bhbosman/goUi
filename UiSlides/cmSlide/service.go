@@ -6,10 +6,10 @@ import (
 	"github.com/bhbosman/goConnectionManager"
 	"github.com/bhbosman/gocommon/ChannelHandler"
 	"github.com/bhbosman/gocommon/GoFunctionCounter"
-	"github.com/bhbosman/gocommon/Services/IFxService"
-	"github.com/bhbosman/gocommon/Services/interfaces"
 	"github.com/bhbosman/gocommon/pubSub"
+	"github.com/bhbosman/gocommon/services/IFxService"
 	"github.com/bhbosman/gocommon/services/ISendMessage"
+	"github.com/bhbosman/gocommon/services/interfaces"
 	"github.com/cskr/pubsub"
 	"go.uber.org/zap"
 )
