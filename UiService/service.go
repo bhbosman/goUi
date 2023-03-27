@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/bhbosman/goUi/ui"
-	"github.com/bhbosman/gocommon/Services/IFxService"
+	"github.com/bhbosman/gocommon/services/IFxService"
 	"github.com/cskr/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
