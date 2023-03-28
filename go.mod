@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20230308211643-24fe88b2378e
 	github.com/bhbosman/goConnectionManager v0.0.0-20230328152946-8854ec40e34b
-	github.com/bhbosman/gocommon v0.0.0-20230320083256-4088c43f62a7
+	github.com/bhbosman/gocommon v0.0.0-20230328150634-566a0f916878
 	github.com/cskr/pubsub v1.0.2
 	github.com/gdamore/tcell/v2 v2.5.1
 	github.com/reactivex/rxgo/v2 v2.5.0
@@ -46,7 +46,7 @@ replace github.com/rivo/tview => ../tview
 
 replace github.com/golang/mock => ../gomock
 
-replace github.com/bhbosman/gocommon => ../gocommon
+//replace github.com/bhbosman/gocommon => ../gocommon
 
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
