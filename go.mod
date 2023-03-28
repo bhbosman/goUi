@@ -50,6 +50,6 @@ replace github.com/rivo/tview => github.com/bhbosman/tview v0.0.0-20230310100135
 
 //replace github.com/bhbosman/gocommon => ../gocommon
 
-replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
+//replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
-replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
+//replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
