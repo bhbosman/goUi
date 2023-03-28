@@ -4,8 +4,8 @@ go 1.18
 
 require (
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20230308211643-24fe88b2378e
-	github.com/bhbosman/goConnectionManager v0.0.0-20220721070628-0f4b3c036d93
-	github.com/bhbosman/gocommon v0.0.0-20230320083256-4088c43f62a7
+	github.com/bhbosman/goConnectionManager v0.0.0-20230327104600-4b1464715bb4
+	github.com/bhbosman/gocommon v0.0.0-20230328140834-3b6f0ea2faaa
 	github.com/cskr/pubsub v1.0.2
 	github.com/gdamore/tcell/v2 v2.5.1
 	github.com/reactivex/rxgo/v2 v2.5.0
@@ -17,7 +17,7 @@ require (
 )
 
 require (
-	github.com/bhbosman/goConn v0.0.0-20230320102125-d7416dd8d6dc // indirect
+	github.com/bhbosman/goConn v0.0.0-20230327111455-7a39299fb0aa // indirect
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
