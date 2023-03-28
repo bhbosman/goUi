@@ -17,7 +17,7 @@ require (
 )
 
 require (
-	github.com/bhbosman/goConn v0.0.0-20230320102125-d7416dd8d6dc // indirect
+	github.com/bhbosman/goConn v0.0.0-20230327111455-7a39299fb0aa // indirect
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -40,7 +40,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-
 replace github.com/gdamore/tcell/v2 => github.com/bhbosman/tcell/v2 v2.5.2-0.20220624055704-f9a9454fab5b
 
 replace github.com/golang/mock => github.com/bhbosman/gomock v1.6.1-0.20230302060806-d02c40b7514e
@@ -49,11 +48,8 @@ replace github.com/cskr/pubsub => github.com/bhbosman/pubsub v1.0.3-0.2022080220
 
 replace github.com/rivo/tview => github.com/bhbosman/tview v0.0.0-20230310100135-f8b257a85d36
 
-
-
 //replace github.com/bhbosman/gocommon => ../gocommon
 
 replace github.com/bhbosman/goConnectionManager => ../goConnectionManager
 
 replace github.com/bhbosman/goCommsDefinitions => ../goCommsDefinitions
-
