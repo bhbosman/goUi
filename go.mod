@@ -3,7 +3,7 @@ module github.com/bhbosman/goUi
 go 1.18
 
 require (
-	github.com/bhbosman/goCommsDefinitions v0.0.0-20230308211643-24fe88b2378e
+	github.com/bhbosman/goCommsDefinitions v0.0.0-20230329100608-a6a24c060ad8
 	github.com/bhbosman/goConnectionManager v0.0.0-20230328152946-8854ec40e34b
 	github.com/bhbosman/gocommon v0.0.0-20230329101749-40db0f52d859
 	github.com/cskr/pubsub v1.0.2
@@ -13,11 +13,10 @@ require (
 	go.uber.org/fx v1.19.2
 	go.uber.org/multierr v1.10.0
 	go.uber.org/zap v1.24.0
-	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
+	golang.org/x/net v0.0.0-20211019232329-c6ed85c7a12d
 )
 
 require (
-
 	github.com/bhbosman/goerrors v0.0.0-20220623084908-4d7bbcd178cf // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -34,9 +33,9 @@ require (
 	github.com/teivah/onecontext v0.0.0-20200513185103-40f981bfd775 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/dig v1.16.1 // indirect
-	golang.org/x/sys v0.0.0-20220318055525-2edf467146b5 // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/text v0.3.8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
