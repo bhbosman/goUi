@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/bhbosman/goCommsDefinitions v0.0.0-20250308144130-64993b60920c
-	github.com/bhbosman/goConnectionManager v0.0.0-20250308145438-ea83361668a5
+	github.com/bhbosman/goConnectionManager v0.0.0-20250308150558-5d463bc5c9e3
 	github.com/bhbosman/gocommon v0.0.0-20250308150148-56b7e6e14bff
 	github.com/cskr/pubsub v1.0.2
 	github.com/gdamore/tcell/v2 v2.8.1
